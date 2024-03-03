@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\ScheduleCore\\ScheduleCore.csproj": {}
+    "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\InputService\\FileService.csproj": {}
   },
   "projects": {
-    "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\ScheduleCore\\ScheduleCore.csproj": {
+    "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\InputService\\FileService.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\ScheduleCore\\ScheduleCore.csproj",
-        "projectName": "ScheduleCore",
-        "projectPath": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\ScheduleCore\\ScheduleCore.csproj",
+        "projectUniqueName": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\InputService\\FileService.csproj",
+        "projectName": "FileService",
+        "projectPath": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\InputService\\FileService.csproj",
         "packagesPath": "C:\\Users\\Kha\\.nuget\\packages\\",
-        "outputPath": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\ScheduleCore\\obj\\",
+        "outputPath": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\InputService\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -45,15 +45,13 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
-            "Microsoft.EntityFrameworkCore.Design": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
+            "CsvHelper": {
               "target": "Package",
-              "version": "[6.0.27, )"
+              "version": "[31.0.2, )"
             },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
+            "Newtonsoft.Json": {
               "target": "Package",
-              "version": "[6.0.27, )"
+              "version": "[13.0.3, )"
             }
           },
           "imports": [

@@ -1,0 +1,14 @@
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\bin\Debug\net6.0\ScheduleCore.deps.json
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\bin\Debug\net6.0\ScheduleCore.dll
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\bin\Debug\net6.0\ScheduleCore.pdb
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.GeneratedMSBuildEditorConfig.editorconfig
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.AssemblyInfoInputs.cache
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.AssemblyInfo.cs
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.csproj.CoreCompileInputs.cache
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.dll
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\refint\ScheduleCore.dll
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.pdb
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ref\ScheduleCore.dll
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\bin\Debug\net6.0\ScheduleCore.runtimeconfig.json
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.csproj.AssemblyReference.cache
+D:\KHA\FPTU\Semesters\Semester7\PRN221\Code\Assignment\ScheduleCore\obj\Debug\net6.0\ScheduleCore.genruntimeconfig.cache
