@@ -10,7 +10,12 @@ public class CsvFileService : IFileService
     {
         using var reader = new StreamReader(filePath);
         using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-        return csv.GetRecords<T>();
+        var records = new List<T>();
+        await foreach (var record in csv.GetRecordsAsync<T>())
+        {
+            records.Add(record);
+        }
+        return records;
     }
 
     public async Task WriteAsync<T>(string filePath, IEnumerable<T> records)

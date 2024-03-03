@@ -7,14 +7,13 @@ public class JsonFileService : IFileService
     public async Task<IEnumerable<T>> ReadAsync<T>(string filePath)
     {
         using StreamReader file = File.OpenText(filePath);
-        var serializer = new JsonSerializer();
-        return (IEnumerable<T>)serializer.Deserialize(file, typeof(IEnumerable<T>));
+        var content = await file.ReadToEndAsync();
+        return JsonConvert.DeserializeObject<IEnumerable<T>>(content) ?? new List<T>();
     }
 
     public async Task WriteAsync<T>(string filePath, IEnumerable<T> records)
     {
-        using StreamWriter file = File.CreateText(filePath);
-        JsonSerializer serializer = new JsonSerializer();
-        serializer.Serialize(file, records);
+        var content = JsonConvert.SerializeObject(records);
+        await File.WriteAllTextAsync(filePath, content);
     }
 }
