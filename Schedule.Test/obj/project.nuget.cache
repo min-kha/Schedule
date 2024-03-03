@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "dgSpecHash": "4AX5ruz4ziZNYl2F8EuRQft6dJ0bJ1HERNt26udnb9gDSBFCwpcYyKOAI6rWbIBKIEZDy2s1Gl7GWoaWh3gnyA==",
+  "success": true,
+  "projectFilePath": "D:\\KHA\\FPTU\\Semesters\\Semester7\\PRN221\\Code\\Assignment\\Schedule.Test\\Schedule.Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Kha\\.nuget\\packages\\csvhelper\\31.0.2\\csvhelper.31.0.2.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\microsoft.codecoverage\\17.9.0\\microsoft.codecoverage.17.9.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\microsoft.net.test.sdk\\17.9.0\\microsoft.net.test.sdk.17.9.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.9.0\\microsoft.testplatform.objectmodel.17.9.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\microsoft.testplatform.testhost\\17.9.0\\microsoft.testplatform.testhost.17.9.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\nunit\\4.1.0\\nunit.4.1.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\nunit.analyzers\\4.0.1\\nunit.analyzers.4.0.1.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\nunit3testadapter\\4.5.0\\nunit3testadapter.4.5.0.nupkg.sha512",
+    "C:\\Users\\Kha\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512"
+  ],
+  "logs": []
+}
