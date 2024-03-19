@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ScheduleCore.Models
+namespace ScheduleCore.Entities
+
+
 {
     public partial class Subject
     {

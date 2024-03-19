@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using ScheduleCore.Entities;
 
-namespace ScheduleCore.Models
+namespace ScheduleCore.Entities
+
 {
     public partial class ScheduleContext : DbContext
     {

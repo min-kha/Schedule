@@ -1,7 +1,8 @@
-﻿using System;
+﻿using ScheduleCore.Models;
+using System;
 using System.Collections.Generic;
 
-namespace ScheduleCore.Models
+namespace ScheduleCore.Entities
 {
     public partial class Room
     {

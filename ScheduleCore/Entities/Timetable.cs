@@ -1,8 +1,10 @@
-﻿using System;
+﻿using ScheduleCore.Entities;
+using System;
 using System.Collections.Generic;
 
-namespace ScheduleCore.Models
+namespace ScheduleCore.Entities
 {
+
     public partial class Timetable
     {
         public int Id { get; set; }

@@ -2,78 +2,79 @@
 using NUnit.Framework;
 using NUnit.Framework.Legacy;
 
-namespace Schedule.Test;
-
-[TestFixture]
-public class CsvFileServiceTests
+namespace Schedule.Test
 {
-    private string csvFilePath;
-    private CsvFileService csvService;
-
-    [SetUp]
-    public void Setup()
+    [TestFixture]
+    public class CsvFileServiceTests
     {
-        csvFilePath = "test.csv";
-        csvService = new CsvFileService();
-    }
+        private string csvFilePath;
+        private CsvFileService csvService;
 
-    [TearDown]
-    public void Cleanup()
-    {
-        if (File.Exists(csvFilePath))
+        [SetUp]
+        public void Setup()
         {
-            File.Delete(csvFilePath);
+            csvFilePath = "test.csv";
+            csvService = new CsvFileService();
         }
-    }
-    [Test]
-    public async Task ReadAsync_ShouldReturnCorrectData()
-    {
-        // Arrange
-        var csvFilePath = "test.csv";
-        var csvService = new CsvFileService();
-        var testData = new List<Person>
+
+        [TearDown]
+        public void Cleanup()
+        {
+            if (File.Exists(csvFilePath))
+            {
+                File.Delete(csvFilePath);
+            }
+        }
+        [Test]
+        public async Task ReadAsync_ShouldReturnCorrectData()
+        {
+            // Arrange
+            var csvFilePath = "test.csv";
+            var csvService = new CsvFileService();
+            var testData = new List<Person>
         {
             new Person { Name = "John Doe", Age = 30 },
             new Person { Name = "Jane Doe", Age = 25 }
         };
-        await csvService.WriteAsync(csvFilePath, testData);
+            await csvService.WriteAsync(csvFilePath, testData);
 
-        // Act
-        var result = await csvService.ReadAsync<Person>(csvFilePath);
+            // Act
+            var result = await csvService.ReadAsync<Person>(csvFilePath);
 
-        // Assert
-        Assert.That(result.Count(), Is.EqualTo(testData.Count));
-        for (int i = 0; i < testData.Count; i++)
-        {
-            Assert.That(result.ToList()[i].Name, Is.EqualTo(testData[i].Name));
-            Assert.That(result.ToList()[i].Age, Is.EqualTo(testData[i].Age));
+            // Assert
+            Assert.That(result.Count(), Is.EqualTo(testData.Count));
+            for (int i = 0; i < testData.Count; i++)
+            {
+                Assert.That(result.ToList()[i].Name, Is.EqualTo(testData[i].Name));
+                Assert.That(result.ToList()[i].Age, Is.EqualTo(testData[i].Age));
+            }
+
+            // Cleanup
+            //File.Delete(csvFilePath);
         }
 
-        // Cleanup
-        //File.Delete(csvFilePath);
-    }
-
-    [Test]
-    public async Task WriteAsync_ShouldCreateFileWithCorrectData()
-    {
-        // Arrange
-        var csvFilePath = "test.csv";
-        var csvService = new CsvFileService();
-        var testData = new List<Person>
+        [Test]
+        public async Task WriteAsync_ShouldCreateFileWithCorrectData()
+        {
+            // Arrange
+            var csvFilePath = "test.csv";
+            var csvService = new CsvFileService();
+            var testData = new List<Person>
     {
         new Person { Name = "John Doe", Age = 30 },
         new Person { Name = "Jane Doe", Age = 25 }
     };
 
-        // Act
-        await csvService.WriteAsync(csvFilePath, testData);
+            // Act
+            await csvService.WriteAsync(csvFilePath, testData);
 
-        // Assert
-        Assert.That(File.Exists(csvFilePath), Is.True);
+            // Assert
+            Assert.That(File.Exists(csvFilePath), Is.True);
 
-        // Clean up
-        File.Delete(csvFilePath);
+            // Clean up
+            File.Delete(csvFilePath);
+        }
+
+
     }
-
-
 }
