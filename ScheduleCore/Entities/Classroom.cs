@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
-
 {
-    public partial class Class
+    public partial class Classroom
     {
-        public Class()
+        public Classroom()
         {
             Timetables = new HashSet<Timetable>();
         }

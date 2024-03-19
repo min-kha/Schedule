@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using ScheduleCore.Entities;
 
 namespace ScheduleCore.Entities
-
 {
     public partial class ScheduleContext : DbContext
     {
@@ -19,7 +17,7 @@ namespace ScheduleCore.Entities
         }
 
         public virtual DbSet<Building> Buildings { get; set; } = null!;
-        public virtual DbSet<Class> Classes { get; set; } = null!;
+        public virtual DbSet<Classroom> Classrooms { get; set; } = null!;
         public virtual DbSet<Room> Rooms { get; set; } = null!;
         public virtual DbSet<Slot> Slots { get; set; } = null!;
         public virtual DbSet<Subject> Subjects { get; set; } = null!;
@@ -30,6 +28,7 @@ namespace ScheduleCore.Entities
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("server=(local);database=Schedule;uid=sa;pwd=123456");
             }
         }
@@ -51,9 +50,9 @@ namespace ScheduleCore.Entities
                     .HasColumnName("name");
             });
 
-            modelBuilder.Entity<Class>(entity =>
+            modelBuilder.Entity<Classroom>(entity =>
             {
-                entity.ToTable("Class");
+                entity.ToTable("Classroom");
 
                 entity.HasIndex(e => e.Code, "class_code_unique")
                     .IsUnique();
@@ -205,7 +204,7 @@ namespace ScheduleCore.Entities
 
                 entity.Property(e => e.TeacherId).HasColumnName("teacherId");
 
-                entity.HasOne(d => d.Class)
+                entity.HasOne(d => d.Classroom)
                     .WithMany(p => p.Timetables)
                     .HasForeignKey(d => d.ClassId)
                     .HasConstraintName("timetable_classid_foreign");

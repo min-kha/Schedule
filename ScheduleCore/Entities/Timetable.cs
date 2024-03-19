@@ -1,10 +1,8 @@
-﻿using ScheduleCore.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
 {
-
     public partial class Timetable
     {
         public int Id { get; set; }
@@ -15,7 +13,7 @@ namespace ScheduleCore.Entities
         public int? SubjectId { get; set; }
         public DateTime Date { get; set; }
 
-        public virtual Class? Class { get; set; }
+        public virtual Classroom? Classroom { get; set; }
         public virtual Room? Room { get; set; }
         public virtual Slot? Slot { get; set; }
         public virtual Subject? Subject { get; set; }

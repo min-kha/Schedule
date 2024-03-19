@@ -1,9 +1,7 @@
-﻿using ScheduleCore.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
-
 {
     public partial class Building
     {
