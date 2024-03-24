@@ -1,0 +1,51 @@
+﻿@page
+@model ScheduleWeb.Pages.Classrooms.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Classroom</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Classroom.Id" />
+            <div class="form-group">
+                <label asp-for="Classroom.Name" class="control-label"></label>
+                <input asp-for="Classroom.Name" class="form-control" />
+                <span asp-validation-for="Classroom.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Classroom.Code" class="control-label"></label>
+                <input asp-for="Classroom.Code" class="form-control" />
+                <span asp-validation-for="Classroom.Code" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Classroom.Semesters" class="control-label"></label>
+                <input asp-for="Classroom.Semesters" class="form-control" />
+                <span asp-validation-for="Classroom.Semesters" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Classroom.Year" class="control-label"></label>
+                <input asp-for="Classroom.Year" class="form-control" />
+                <span asp-validation-for="Classroom.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

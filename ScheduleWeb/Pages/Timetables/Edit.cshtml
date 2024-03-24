@@ -1,0 +1,61 @@
+﻿@page
+@model ScheduleWeb.Pages.Timetables.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Timetable</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Timetable.Id" />
+            <div class="form-group">
+                <label asp-for="Timetable.SlotId" class="control-label"></label>
+                <select asp-for="Timetable.SlotId" class="form-control" asp-items="ViewBag.SlotId"></select>
+                <span asp-validation-for="Timetable.SlotId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timetable.ClassId" class="control-label"></label>
+                <select asp-for="Timetable.ClassId" class="form-control" asp-items="ViewBag.ClassId"></select>
+                <span asp-validation-for="Timetable.ClassId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timetable.TeacherId" class="control-label"></label>
+                <select asp-for="Timetable.TeacherId" class="form-control" asp-items="ViewBag.TeacherId"></select>
+                <span asp-validation-for="Timetable.TeacherId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timetable.RoomId" class="control-label"></label>
+                <select asp-for="Timetable.RoomId" class="form-control" asp-items="ViewBag.RoomId"></select>
+                <span asp-validation-for="Timetable.RoomId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timetable.SubjectId" class="control-label"></label>
+                <select asp-for="Timetable.SubjectId" class="form-control" asp-items="ViewBag.SubjectId"></select>
+                <span asp-validation-for="Timetable.SubjectId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Timetable.Date" class="control-label"></label>
+                <input asp-for="Timetable.Date" class="form-control" />
+                <span asp-validation-for="Timetable.Date" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
