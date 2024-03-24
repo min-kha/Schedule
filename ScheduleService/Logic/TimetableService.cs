@@ -73,7 +73,7 @@ namespace ScheduleService.Logic
                         timetables.Add(new Timetable
                         {
                             Classroom = classroom,
-                            ClassId = classroom?.Id,
+                            ClassroomId = classroom?.Id,
                             Subject = subject,
                             SubjectId = subject.Id,
                             Room = room,
@@ -91,7 +91,7 @@ namespace ScheduleService.Logic
                         timetables.Add(new Timetable
                         {
                             Classroom = classroom,
-                            ClassId = classroom?.Id,
+                            ClassroomId = classroom?.Id,
                             Subject = subject,
                             SubjectId = subject.Id,
                             Room = room,

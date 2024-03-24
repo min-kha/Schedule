@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.Timetables
+namespace ScheduleWeb.Pages.Teachers
 {
     public class EditModel : PageModel
     {
@@ -20,26 +20,21 @@ namespace ScheduleWeb.Pages.Timetables
         }
 
         [BindProperty]
-        public Timetable Timetable { get; set; } = default!;
+        public Teacher Teacher { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Timetables == null)
+            if (id == null || _context.Teachers == null)
             {
                 return NotFound();
             }
 
-            var timetable =  await _context.Timetables.FirstOrDefaultAsync(m => m.Id == id);
-            if (timetable == null)
+            var teacher =  await _context.Teachers.FirstOrDefaultAsync(m => m.Id == id);
+            if (teacher == null)
             {
                 return NotFound();
             }
-            Timetable = timetable;
-           ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-           ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Id");
-           ViewData["SlotId"] = new SelectList(_context.Slots, "Id", "Name");
-           ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
-           ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Email");
+            Teacher = teacher;
             return Page();
         }
 
@@ -52,7 +47,7 @@ namespace ScheduleWeb.Pages.Timetables
                 return Page();
             }
 
-            _context.Attach(Timetable).State = EntityState.Modified;
+            _context.Attach(Teacher).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +55,7 @@ namespace ScheduleWeb.Pages.Timetables
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TimetableExists(Timetable.Id))
+                if (!TeacherExists(Teacher.Id))
                 {
                     return NotFound();
                 }
@@ -73,9 +68,9 @@ namespace ScheduleWeb.Pages.Timetables
             return RedirectToPage("./Index");
         }
 
-        private bool TimetableExists(int id)
+        private bool TeacherExists(int id)
         {
-          return (_context.Timetables?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Teachers?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

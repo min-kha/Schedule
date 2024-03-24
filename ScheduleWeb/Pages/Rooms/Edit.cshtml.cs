@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.Timetables
+namespace ScheduleWeb.Pages.Rooms
 {
     public class EditModel : PageModel
     {
@@ -20,26 +20,22 @@ namespace ScheduleWeb.Pages.Timetables
         }
 
         [BindProperty]
-        public Timetable Timetable { get; set; } = default!;
+        public Room Room { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
-            if (id == null || _context.Timetables == null)
+            if (id == null || _context.Rooms == null)
             {
                 return NotFound();
             }
 
-            var timetable =  await _context.Timetables.FirstOrDefaultAsync(m => m.Id == id);
-            if (timetable == null)
+            var room =  await _context.Rooms.FirstOrDefaultAsync(m => m.Id == id);
+            if (room == null)
             {
                 return NotFound();
             }
-            Timetable = timetable;
-           ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-           ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Id");
-           ViewData["SlotId"] = new SelectList(_context.Slots, "Id", "Name");
-           ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
-           ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Email");
+            Room = room;
+           ViewData["BuildingId"] = new SelectList(_context.Buildings, "Id", "Name");
             return Page();
         }
 
@@ -52,7 +48,7 @@ namespace ScheduleWeb.Pages.Timetables
                 return Page();
             }
 
-            _context.Attach(Timetable).State = EntityState.Modified;
+            _context.Attach(Room).State = EntityState.Modified;
 
             try
             {
@@ -60,7 +56,7 @@ namespace ScheduleWeb.Pages.Timetables
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TimetableExists(Timetable.Id))
+                if (!RoomExists(Room.Id))
                 {
                     return NotFound();
                 }
@@ -73,9 +69,9 @@ namespace ScheduleWeb.Pages.Timetables
             return RedirectToPage("./Index");
         }
 
-        private bool TimetableExists(int id)
+        private bool RoomExists(int id)
         {
-          return (_context.Timetables?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Rooms?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

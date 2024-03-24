@@ -21,9 +21,4 @@
     <ProjectReference Include="..\ScheduleService\ScheduleService.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Pages\Rooms\" />
-    <Folder Include="Pages\Teachers\" />
-  </ItemGroup>
-
 </Project>

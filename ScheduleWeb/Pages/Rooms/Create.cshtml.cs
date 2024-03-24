@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.Timetables
+namespace ScheduleWeb.Pages.Rooms
 {
     public class CreateModel : PageModel
     {
@@ -20,27 +20,23 @@ namespace ScheduleWeb.Pages.Timetables
 
         public IActionResult OnGet()
         {
-        ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-        ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Id");
-        ViewData["SlotId"] = new SelectList(_context.Slots, "Id", "Name");
-        ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
-        ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Email");
+        ViewData["BuildingId"] = new SelectList(_context.Buildings, "Id", "Name");
             return Page();
         }
 
         [BindProperty]
-        public Timetable Timetable { get; set; } = default!;
+        public Room Room { get; set; } = default!;
         
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Timetables == null || Timetable == null)
+          if (!ModelState.IsValid || _context.Rooms == null || Room == null)
             {
                 return Page();
             }
 
-            _context.Timetables.Add(Timetable);
+            _context.Rooms.Add(Room);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

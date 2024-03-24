@@ -77,6 +77,9 @@ namespace ScheduleCore.Entities
             {
                 entity.ToTable("Room");
 
+                entity.HasIndex(e => e.RoomNumber, "room_unique_roomNumber")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.BuildingId).HasColumnName("buildingId");
@@ -150,6 +153,9 @@ namespace ScheduleCore.Entities
                 entity.HasIndex(e => e.Email, "teacher_email_unique")
                     .IsUnique();
 
+                entity.HasIndex(e => e.TeacherCode, "teacher_teacherCode_unique")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Email)
@@ -176,13 +182,10 @@ namespace ScheduleCore.Entities
             {
                 entity.ToTable("Timetable");
 
-                entity.HasIndex(e => new { e.Date, e.SlotId, e.ClassId }, "timetable_unique_class_per_teacher_slot")
+                entity.HasIndex(e => new { e.Date, e.SlotId, e.ClassroomId }, "timetable_unique_class_per_teacher_slot")
                     .IsUnique();
 
                 entity.HasIndex(e => new { e.Date, e.SlotId, e.RoomId }, "timetable_unique_room_per_day_slot")
-                    .IsUnique();
-
-                entity.HasIndex(e => new { e.Date, e.SlotId, e.SubjectId }, "timetable_unique_subject_per_day_slot")
                     .IsUnique();
 
                 entity.HasIndex(e => new { e.Date, e.SlotId, e.TeacherId }, "timetable_unique_teacher_per_day_slot")
@@ -190,7 +193,7 @@ namespace ScheduleCore.Entities
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
-                entity.Property(e => e.ClassId).HasColumnName("classId");
+                entity.Property(e => e.ClassroomId).HasColumnName("classroomId");
 
                 entity.Property(e => e.Date)
                     .HasColumnType("date")
@@ -206,7 +209,7 @@ namespace ScheduleCore.Entities
 
                 entity.HasOne(d => d.Classroom)
                     .WithMany(p => p.Timetables)
-                    .HasForeignKey(d => d.ClassId)
+                    .HasForeignKey(d => d.ClassroomId)
                     .HasConstraintName("timetable_classid_foreign");
 
                 entity.HasOne(d => d.Room)

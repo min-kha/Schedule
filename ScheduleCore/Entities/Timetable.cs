@@ -7,7 +7,7 @@ namespace ScheduleCore.Entities
     {
         public int Id { get; set; }
         public int? SlotId { get; set; }
-        public int? ClassId { get; set; }
+        public int? ClassroomId { get; set; }
         public int? TeacherId { get; set; }
         public int? RoomId { get; set; }
         public int? SubjectId { get; set; }

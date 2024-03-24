@@ -94,7 +94,7 @@ namespace ScheduleService.Service
             var conflictingTimetable = await _context.Timetables.FirstOrDefaultAsync(t =>
                 (t.TeacherId == timetable.TeacherId ||
                     t.RoomId == timetable.RoomId ||
-                    t.ClassId == timetable.ClassId) &&
+                    t.ClassroomId == timetable.ClassroomId) &&
                     t.Date.Date == timetable.Date.Date &&
                     t.Slot == timetable.Slot);
 
@@ -113,9 +113,9 @@ namespace ScheduleService.Service
                     message += " RoomId " + timetable.RoomId;
                 }
 
-                if (conflictingTimetable.ClassId == timetable.ClassId)
+                if (conflictingTimetable.ClassroomId == timetable.ClassroomId)
                 {
-                    message += " ClassId " + timetable.ClassId;
+                    message += " ClassId " + timetable.ClassroomId;
                 }
 
                 message += " on Date " + timetable.Date + " and Slot " + timetable.Slot;
