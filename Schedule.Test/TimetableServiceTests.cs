@@ -3,11 +3,7 @@ using NUnit.Framework;
 using ScheduleCore.Entities;
 using ScheduleService.Logic;
 using ScheduleService.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ScheduleService.Utils;
 
 namespace Schedule.Test
 {
@@ -32,7 +28,7 @@ namespace Schedule.Test
             DayOfWeek dayOfWeek = DayOfWeek.Sunday;
 
             // Act
-            DateTime result = _timetableService.FindNextDayOfWeek(fromDate, dayOfWeek);
+            DateTime result = Util.FindNextDayOfWeek(fromDate, dayOfWeek);
 
             // Assert
             Assert.That(new DateTime(2024, 3, 24), Is.EqualTo(result));
@@ -44,7 +40,7 @@ namespace Schedule.Test
             dayOfWeek = DayOfWeek.Wednesday;
 
             // Act
-            result = _timetableService.FindNextDayOfWeek(fromDate, dayOfWeek);
+            result = Util.FindNextDayOfWeek(fromDate, dayOfWeek);
 
             // Assert
             Assert.That(new DateTime(2024, 3, 20), Is.EqualTo(result));
@@ -59,9 +55,9 @@ namespace Schedule.Test
                 StartDate = DateTime.Now,
                 Classroom = "A101",
                 Subject = "MATH101",
-                Room = 102,
+                Room = "102",
                 Teacher = "JohnDoe",
-                TimeSlotDouble = "XYZ"
+                TimeSlot = "XYZ"
             };
 
             // Assert
@@ -80,7 +76,7 @@ namespace Schedule.Test
             var timetableDto = new TimetableDto
             {
                 StartDate = DateTime.Now.Date,
-                TimeSlotDouble = "A24",
+                TimeSlot = "A24",
                 //Classroom = "C211", // Maybe null
                 //Room = 294, // Maybe null
                 //Teacher = "TC00003", // Maybe null

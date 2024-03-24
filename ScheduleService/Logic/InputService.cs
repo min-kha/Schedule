@@ -1,10 +1,11 @@
 ﻿using FileService;
 using FileService.Interface;
+using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
 
 namespace ScheduleService.Logic;
 
-public class InputService
+public class InputService : IInputService
 {
     private readonly IFileService _jsonFileService;
     private readonly IFileService _xmlFileService;
@@ -19,18 +20,37 @@ public class InputService
 
     public async Task<IEnumerable<TimetableDto>> ReadFromFileAsync(string filePath)
     {
-        string fileExtension = Path.GetExtension(filePath);
+        string tempFilePath = Path.GetFileNameWithoutExtension(filePath) + "-temp" + Path.GetExtension(filePath);
 
-        switch (fileExtension.ToLower())
+        try
         {
-            case ".json":
-                return await _jsonFileService.ReadAsync<TimetableDto>(filePath);
-            case ".xml":
-                return await _xmlFileService.ReadAsync<TimetableDto>(filePath);
-            case ".csv":
-                return await _csvFileService.ReadAsync<TimetableDto>(filePath);
-            default:
-                throw new NotSupportedException($"File format '{fileExtension}' is not supported.");
+            File.Copy(filePath, tempFilePath);
+        }
+        catch (Exception ex)
+        {
+            // Handle potential errors during copying (e.g., insufficient permissions)
+            throw new Exception($"Failed to copy file: {ex.Message}");
+        }
+        try
+        {
+            string fileExtension = Path.GetExtension(tempFilePath);
+            IEnumerable<TimetableDto> timetableDtos = fileExtension.ToLower() switch
+            {
+                ".json" => await _jsonFileService.ReadAsync<TimetableDto>(tempFilePath),
+                ".xml" => await _xmlFileService.ReadAsync<TimetableDto>(tempFilePath),
+                ".csv" => await _csvFileService.ReadAsync<TimetableDto>(tempFilePath),
+                _ => throw new NotSupportedException($"File format '{fileExtension}' is not supported."),
+            };
+            for (int i = 0; i < timetableDtos.Count(); i++)
+            {
+                timetableDtos.ElementAt(i).Id = (i + 1).ToString();
+            }
+            return timetableDtos;
+        }
+        finally
+        {
+            // Ensure the temporary file is deleted regardless of success or failure
+            File.Delete(tempFilePath);
         }
     }
 }

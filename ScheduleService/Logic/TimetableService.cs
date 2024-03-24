@@ -1,53 +1,108 @@
 ﻿using ScheduleCore.Entities;
+using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
+using ScheduleService.Utils;
+using System.Xml;
 
 namespace ScheduleService.Logic
 {
-    public class TimetableService
+    public class TimetableService : ITimetableService
     {
         private readonly ScheduleContext _context;
         public TimetableService(ScheduleContext context)
         {
             _context = context;
         }
+
+        public List<TimetableExtend> GenerateScheduleAll(IEnumerable<TimetableDto> timetableDtos)
+        {
+            var timetableExtends = new List<TimetableExtend>();
+            int index = 0;
+
+            foreach (var timetableDto in timetableDtos)
+            {
+                index++;
+                try
+                {
+                    var generatedTimetables = GenerateSemesterSchedule(timetableDto);
+                    foreach (var timetable in generatedTimetables)
+                    {
+                        timetableExtends.Add(new TimetableExtend { Timetable = timetable, TimetableDtoId = index });
+                    }
+                }
+                catch (InvalidDataException ex)
+                {
+                    timetableExtends.Add(new TimetableExtend { Timetable = null, TimetableDtoId = index, Message = ex.Message });
+                }
+                catch (Exception ex )
+                {
+                    Console.WriteLine("***Error: GenerateScheduleAll - " + ex.Message);
+                    timetableExtends.Add(new TimetableExtend { Timetable = null, TimetableDtoId = index, Message = "Lỗi không xác định" });
+                }
+            }
+
+            return timetableExtends;
+        }
+
         public List<Timetable> GenerateSemesterSchedule(TimetableDto timetableDto)
         {
-            if (timetableDto.TimeSlotDouble == null || !IsTimeSlotDouble(timetableDto.TimeSlotDouble)) throw new InvalidDataException();
+            if (timetableDto.TimeSlot == null || !Util.IsTimeSlotDouble(timetableDto.TimeSlot)) throw new InvalidDataException();
             var timetables = new List<Timetable>();
 
             var classroom = GetClassroom(timetableDto.Classroom);
             var subject = GetSubject(timetableDto.Subject);
             var room = GetRoom(timetableDto.Room);
             var teacher = GetTeacher(timetableDto.Teacher);
-            var (firstSlot, secondSlot, firstWeekTime, secondWeekTime) = GetTimeSlots(timetableDto.TimeSlotDouble.ToString()!);
+            var (firstSlot, secondSlot, firstWeekTime, secondWeekTime) = GetTimeSlots(timetableDto.TimeSlot.ToString()!);
 
             if (subject != null)
             {
-                var firstDate = FindNextDayOfWeek(timetableDto.StartDate, firstWeekTime);
-                var secondDate = FindNextDayOfWeek(timetableDto.StartDate, secondWeekTime);
-
+                var firstDate = Util.FindNextDayOfWeek(timetableDto.StartDate, firstWeekTime);
+                var secondDate = Util.FindNextDayOfWeek(timetableDto.StartDate, secondWeekTime);
+                // đổi chỗ
+                if (firstDate > secondDate)
+                {
+                    (secondDate, firstDate) = (firstDate, secondDate);
+                    (secondSlot, firstSlot) = (firstSlot, secondSlot);
+                }
                 for (int i = 0; i < subject.CreditSlot; i++)
                 {
-                    timetables.Add(new Timetable
+                    if (i % 2 == 0)
                     {
-                        Classroom = classroom,
-                        Subject = subject,
-                        Room = room,
-                        Teacher = teacher,
-                        Slot = firstSlot,
-                        Date = firstDate
-                    });
-                    timetables.Add(new Timetable
+
+                        timetables.Add(new Timetable
+                        {
+                            Classroom = classroom,
+                            ClassId = classroom?.Id,
+                            Subject = subject,
+                            SubjectId = subject.Id,
+                            Room = room,
+                            RoomId = room?.Id,
+                            Teacher = teacher,
+                            TeacherId = teacher?.Id,
+                            Slot = firstSlot,
+                            Date = firstDate
+                        });
+                        firstDate = firstDate.AddDays(7);
+
+                    }
+                    else
                     {
-                        Classroom = classroom,
-                        Subject = subject,
-                        Room = room,
-                        Teacher = teacher,
-                        Slot = secondSlot,
-                        Date = secondDate
-                    });
-                    firstDate = firstDate.AddDays(7);
-                    secondDate = secondDate.AddDays(7);
+                        timetables.Add(new Timetable
+                        {
+                            Classroom = classroom,
+                            ClassId = classroom?.Id,
+                            Subject = subject,
+                            SubjectId = subject.Id,
+                            Room = room,
+                            RoomId = room?.Id,
+                            Teacher = teacher,
+                            TeacherId = teacher?.Id,
+                            Slot = secondSlot,
+                            Date = secondDate
+                        });
+                        secondDate = secondDate.AddDays(7);
+                    }
                 }
             }
 
@@ -58,28 +113,29 @@ namespace ScheduleService.Logic
         {
             if (string.IsNullOrEmpty(classroomCode))
                 return null;
-            return _context.Classrooms.FirstOrDefault(c => c.Code.ToUpper() == classroomCode.ToUpper());
+            return _context.Classrooms.FirstOrDefault(c => c.Code.ToUpper() == classroomCode.ToUpper()) ?? throw new InvalidDataException("Không tìm thấy lớp học với classroomCode = " + classroomCode);
         }
 
         private Subject? GetSubject(string? subjectCode)
         {
             if (string.IsNullOrEmpty(subjectCode))
                 return null;
-            return _context.Subjects.FirstOrDefault(s => s.Code.ToUpper() == subjectCode.ToUpper());
+            return _context.Subjects.FirstOrDefault(s => s.Code.ToUpper() == subjectCode.ToUpper()) ?? throw new InvalidDataException("Không tìm thấy môn học với subjectCode = " + subjectCode);
         }
 
-        private Room? GetRoom(int? roomNumber)
+        private Room? GetRoom(string? roomNumber)
         {
-            if (roomNumber == null)
+            bool isInt = int.TryParse(roomNumber, out var roomId);
+            if (string.IsNullOrEmpty(roomNumber) || !isInt)
                 return null;
-            return _context.Rooms.FirstOrDefault(r => r.RoomNumber == roomNumber);
+            return _context.Rooms.FirstOrDefault(r => r.RoomNumber == roomId) ?? throw new InvalidDataException("Không tìm thấy phòng học với roomNumber = " + roomNumber);
         }
 
         private Teacher? GetTeacher(string? teacherCode)
         {
             if (string.IsNullOrEmpty(teacherCode))
                 return null;
-            return _context.Teachers.FirstOrDefault(t => t.TeacherCode.ToUpper() == teacherCode.ToUpper());
+            return _context.Teachers.FirstOrDefault(t => t.TeacherCode.ToUpper() == teacherCode.ToUpper()) ?? throw new InvalidDataException("Không tìm thấy giáo viên với teacherCode = " + teacherCode);
         }
 
         private (Slot firstSlot, Slot secondSlot, DayOfWeek firstWeekTime, DayOfWeek secondWeekTime) GetTimeSlots(string timeSlotDouble)
@@ -94,13 +150,13 @@ namespace ScheduleService.Logic
 
             if (dateSession == 'A')
             {
-                firstSlot = GetSlotByNumber(1);
-                secondSlot = GetSlotByNumber(2);
+                firstSlot = GetSlotDByNumber(1);
+                secondSlot = GetSlotDByNumber(2);
             }
             else if (dateSession == 'P')
             {
-                firstSlot = GetSlotByNumber(3);
-                secondSlot = GetSlotByNumber(4);
+                firstSlot = GetSlotDByNumber(3);
+                secondSlot = GetSlotDByNumber(4);
             }
             else
             {
@@ -110,25 +166,11 @@ namespace ScheduleService.Logic
             return (firstSlot, secondSlot, firstWeekTime, secondWeekTime);
         }
 
-        /// <summary>
-        /// Tìm ngày gần nhất lớn hơn fromDate và có cùng thứ với dayOfWeek
-        /// </summary>
-        /// <param name="fromDate"></param>
-        /// <param name="dayOfWeek"></param>
-        /// <returns></returns>
-        public DateTime FindNextDayOfWeek(DateTime fromDate, DayOfWeek dayOfWeek)
-        {
-            int daysToAdd = ((int)dayOfWeek - (int)fromDate.DayOfWeek + 7) % 7;
-            return fromDate.AddDays(daysToAdd);
-        }
-        private Slot GetSlotByNumber(int slotNum)
+
+        private Slot GetSlotDByNumber(int slotNum)
         {
             return _context.Slots.First(s => s.Name == $"Slot {slotNum}D");
         }
 
-        private bool IsTimeSlotDouble(string input)
-        {
-            return Enum.TryParse(input, out TimeSlotDouble timeSlotDouble);
-        }
     }
 }
