@@ -1,0 +1,72 @@
+﻿@page
+@model ScheduleWeb.Pages.Timetables.RoomsModel
+@{
+    ViewData["Title"] = "Danh sách phòng của ngày " + ((Model.Date ?? DateTime.Now).ToString("d/M/yyyy"));
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Danh sách phòng của ngày @((Model.Date ?? DateTime.Now).ToString("d/M/yyyy"))</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-outline-success">Tạo mới</a>
+    <a asp-page="Import/FromFile" class="btn btn-success">Nhập từ file</a>
+    <a asp-page="DeleteMultiple/Index" class="btn btn-outline-danger">Xóa hàng loạt</a>
+</p>
+<form>
+    <label asp-for="@Model.Date">
+        Chọn ngày:
+    </label>
+    <input class="form-control" type="date" asp-for="@Model.Date" onchange="submit()" />
+</form>
+<span class="text-success">@TempData["SuccessMessage"]</span>
+<table class="table table-bordered text-center table-hover">
+    <thead class="table-primary">
+        <tr>
+            <th>Room</th>
+            @foreach (var slot in Model.Slots)
+            {
+                <th>
+                    <div class="fw-bolder">@slot.Name</div>
+                    <div class="fw-light">
+                        ( @slot.Start.ToString("hh\\:mm") - @slot.End.ToString("hh\\:mm") )
+                    </div>
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model.Rooms)
+        {
+            <tr>
+                <th class="text-success fs-4">@room.RoomNumber</th>
+                @foreach (var slot in Model.Slots)
+                {
+                    <td style="position: relative;">
+                        @{
+                            var timetable = Model.Timetables.Find(t => t.RoomId == room.Id && t.SlotId == slot.Id);
+                        }
+                        @if (timetable != null)
+                        {
+                            <div>
+                                <a asp-page="/Classrooms/Details" asp-route-id="@timetable?.ClassroomId" class="fw-bold text-info">@timetable?.Classroom?.Code</a>
+                            </div>
+                            <div>
+                                <a asp-page="/Subjects/Details" asp-route-id="@timetable?.SubjectId" class="fw-bold text-success">@timetable?.Subject?.Name</a>
+                            </div>
+                            <div>
+                                <a asp-page="/Teachers/Details" asp-route-id="@timetable?.TeacherId" class="fw-bold text-warning">@timetable?.Teacher?.Name</a>
+                            </div>
+
+                            <div style="position: absolute; top: 5px; right: 5px;">
+                                <a asp-page="/Timetables/Edit" asp-route-id="@timetable?.Id" class="text-secondary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </div>
+                        }
+                    </td>
+
+                }
+            </tr>
+        }
+    </tbody>
+</table>

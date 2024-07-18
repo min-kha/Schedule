@@ -1,0 +1,148 @@
+﻿@page
+@model ScheduleWeb.Pages.Timetables.Import.FromFileModel
+@{
+    ViewData["Title"] = "Import File";
+}
+
+<h1>Upload File</h1>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="fileInput">Chọn file:</label>
+        <input type="file" class="form-control-file" id="fileInput" name="fileInput">
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+@if (!ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">An error occurred!</h4>
+        <p>@Html.ValidationSummary(false, "", new { @class = "text-danger" })</p>
+        <hr>
+        <p class="mb-0">Đã xảy ra lỗi khi nhập lịch trình. Vui lòng thử lại.</p>
+    </div>
+}
+@if (Model.ImportResult != null)
+{
+    <h2>Kết quả import:</h2>
+    <table class="table table-hover table-responsive table-bordered">
+        <thead class="table-secondary">
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].Classroom)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].Subject)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].Room)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].Teacher)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].TimeSlot)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TimetableDtos[0].StartDate)
+                </th>
+                <th class="text-center">Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.TimetableDtos)
+            {
+                int.TryParse(item.Id, out int timetableDtoId);
+                bool hasError = Model.ImportResult.ErrorImporteds.Any(e => e.TimetableDtoId == timetableDtoId);
+                <tr class="@(hasError ? "table-danger" : "table-success")">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Classroom)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Subject)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Room)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Teacher)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TimeSlot)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.StartDate)
+                    </td>
+                    <td class="w-50">
+                        @if (hasError)
+                        {
+                            <div class="d-flex justify-content-end">
+                                <button class="showButton btn btn-outline-danger p-1" style="width:80px">Errors</button>
+                            </div>
+                            <div class="show-container table-responsive" style="max-height: 200px; overflow-y: auto; display: none;">
+                                <table class="table table-primary table-borderless table-hover table-responsive table-sm">
+                                    <thead>
+                                    <th>Date</th>
+                                    <th>Slot</th>
+                                    <th>Message</th>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var error in Model.ImportResult.ErrorImporteds.Where(e => e.TimetableDtoId == timetableDtoId))
+                                        {
+                                            <tr>
+                                                <td>@error.Timetable?.Date.ToString("d/M/yyyy")</td>
+                                                <td>@error.Timetable?.Slot?.Name</td>
+                                                <td>@error.Message</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex justify-content-end">
+                                <button class="showButton btn btn-outline-success" style="width:80px">Success</button>
+                            </div>
+                            <div class="show-container table-responsive" style="max-height: 200px; overflow-y: auto; display: none;">
+                                <table class="table table-primary table-borderless table-hover table-responsive table-sm">
+                                    <thead>
+                                    <th>Date</th>
+                                    <th>Slot</th>
+                                    <th>Classroom</th>
+                                    <th>Teacher</th>
+                                    <th>Room</th>
+                                    <th>Subject</th>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var error in Model.ImportResult.SuccessfullyImporteds.Where(e => e.TimetableDtoId == timetableDtoId))
+                                        {
+                                            <tr>
+                                                <td>@error.Timetable?.Date.ToString("d/M/yyyy")</td>
+                                                <td>@error.Timetable?.Slot?.Name</td>
+                                                <td>@error.Timetable?.Classroom?.Name</td>
+                                                <td>@error.Timetable?.Teacher?.Name</td>
+                                                <td>@error.Timetable?.Room?.RoomNumber</td>
+                                                <td>@error.Timetable?.Subject?.Code</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

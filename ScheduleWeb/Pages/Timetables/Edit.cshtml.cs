@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Logic.Interfaces;
 
 namespace ScheduleWeb.Pages.Timetables
 {
     public class EditModel : PageModel
     {
         private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ITimetableService _timetableService;
 
-        public EditModel(ScheduleCore.Entities.ScheduleContext context)
+        public EditModel(ScheduleCore.Entities.ScheduleContext context, ITimetableService timetableService)
         {
             _context = context;
+            _timetableService = timetableService;
         }
 
         [BindProperty]
@@ -29,18 +32,23 @@ namespace ScheduleWeb.Pages.Timetables
                 return NotFound();
             }
 
-            var timetable =  await _context.Timetables.FirstOrDefaultAsync(m => m.Id == id);
+            var timetable = await _context.Timetables.FirstOrDefaultAsync(m => m.Id == id);
             if (timetable == null)
             {
                 return NotFound();
             }
             Timetable = timetable;
-           ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-           ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", "Id");
-           ViewData["SlotId"] = new SelectList(_context.Slots, "Id", "Name");
-           ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
-           ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", "Email");
+            GetData();
             return Page();
+        }
+
+        private void GetData()
+        {
+            ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
+            ViewData["RoomId"] = new SelectList(_context.Rooms, "Id", nameof(Room.RoomNumber));
+            ViewData["SlotId"] = new SelectList(_context.Slots, "Id", "Name");
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
+            ViewData["TeacherId"] = new SelectList(_context.Teachers, "Id", nameof(Teacher.TeacherCode));
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -49,6 +57,16 @@ namespace ScheduleWeb.Pages.Timetables
         {
             if (!ModelState.IsValid)
             {
+                GetData();
+                return Page();
+            }
+
+            var errorMes = await _timetableService.CheckTimetableConflictForEditAsync(Timetable);
+
+            if (!string.IsNullOrEmpty(errorMes))
+            {
+                ModelState.AddModelError(string.Empty, errorMes);
+                GetData();
                 return Page();
             }
 
@@ -70,8 +88,11 @@ namespace ScheduleWeb.Pages.Timetables
                 }
             }
 
-            return RedirectToPage("./Index");
+            GetData();
+            ViewData["SuccessMessage"] = "Sửa thành công";
+            return Page();
         }
+
 
         private bool TimetableExists(int id)
         {

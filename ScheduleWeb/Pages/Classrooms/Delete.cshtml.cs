@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Models;
 
 namespace ScheduleWeb.Pages.Classrooms
 {
@@ -52,8 +54,23 @@ namespace ScheduleWeb.Pages.Classrooms
             if (classroom != null)
             {
                 Classroom = classroom;
-                _context.Classrooms.Remove(Classroom);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Classrooms.Remove(Classroom);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                    {
+                            ModelState.AddModelError(string.Empty, "Lớp học đang được sử dụng, không thể xóa bây giờ.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Lỗi không mong muốn xảy ra.");
+                    }
+                    return Page();
+                }
             }
 
             return RedirectToPage("./Index");

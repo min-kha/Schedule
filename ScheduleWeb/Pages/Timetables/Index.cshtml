@@ -1,67 +1,72 @@
 ﻿@page
-@model ScheduleWeb.Pages.Timetables.IndexModel
-
+@model IndexModel
 @{
-    ViewData["Title"] = "Index";
-    Layout = "~/Pages/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Lịch tuần của giáo viên";
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
+<span class="alert-success">@TempData["SuccessMessage"]</span>
 
 <p>
-    <a asp-page="Create">Create New</a>
+    <a asp-page="Create" class="btn btn-outline-success">Tạo mới</a>
+    <a asp-page="Import/FromFile" class="btn btn-success">Nhập từ file</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Date)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Classroom)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Room)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Slot)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Subject)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Timetable[0].Teacher)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Timetable) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Classroom.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Room.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Slot.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Subject.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Teacher.Email)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<form class="card-header">
+    <select class="form-select" asp-for="TeacherId" asp-items="Model.SelectTeachers" onchange="submit()">
+        <option value="0">Vui lòng chọn giáo viên</option>
+    </select>
+    <div class="card-group">
+        <label asp-for="SelectedWeek" class="form-label col-form-label">Chọn tuần:</label>
+        <input class="form-select" type="week" asp-for="SelectedWeek" value="@Model.SelectedWeek" onchange="submit()" />
+    </div>
+</form>
+@if (Model.WeeklyTimetable.Any())
+{
+    <table class="table table-bordered table-hover text-center">
+        <thead>
+            <tr>
+                <th>Slot</th>
+                @foreach (var dayOfWeek in Enumerable.Range(0, 5).Select(index => Model.FirstDayOfWeek.AddDays(index)))
+                {
+                    <th>@dayOfWeek.ToString("ddd dd/MM/yyyy")</th>
+                }
+
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 1; i <= 4; i++)
+            {
+                <tr>
+                    <td>Slot @i</td>
+                    @foreach (var dayOfWeek in Enumerable.Range(0, 5).Select(index => Model.FirstDayOfWeek.AddDays(index)))
+                    {
+                        var timetable = Model.WeeklyTimetable.FirstOrDefault(t => t.Date == dayOfWeek && t.SlotId == i);
+                        <td style="position: relative;">
+                            @if (timetable != null)
+                            {
+                                <div>
+                                    <a asp-page="/Classrooms/Details" asp-route-id="@timetable?.ClassroomId" class="fw-bold text-info">@timetable?.Classroom?.Code</a>
+                                </div>
+                                <div>
+                                    <a asp-page="/Subjects/Details" asp-route-id="@timetable?.SubjectId" class="fw-bold text-success">@timetable?.Subject?.Name</a>
+                                </div>
+                                <div>
+                                    <a asp-page="/Teachers/Details" asp-route-id="@timetable?.TeacherId" class="fw-bold text-warning">@timetable?.Teacher?.Name</a>
+                                </div>
+                                <div style="position: absolute; top: 5px; right: 5px;">
+                                    <a asp-page="/Timetables/Edit" asp-route-id="@timetable?.Id" class="text-secondary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+else
+{
+    <p>Không có dữ liệu cho tuần hiện tại.</p>
+}

@@ -1,4 +1,9 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
+﻿$(document).ready(function () {
+    $(".showButton").each(function () {
+        $(this).click(function () {
+            var container = $(this).closest('td').find('.show-container');
+            container.slideToggle("slow");
+            $(".show-container").not(container).slideUp("slow");
+        });
+    });
+});

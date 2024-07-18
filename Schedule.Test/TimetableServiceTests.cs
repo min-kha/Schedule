@@ -52,7 +52,7 @@ namespace Schedule.Test
             // Arrange
             var timetableDto = new TimetableDto
             {
-                StartDate = DateTime.Now,
+                StartDate = DateTime.Now.Date.ToShortDateString(),
                 Classroom = "A101",
                 Subject = "MATH101",
                 Room = "102",
@@ -75,7 +75,7 @@ namespace Schedule.Test
 
             var timetableDto = new TimetableDto
             {
-                StartDate = DateTime.Now.Date,
+                StartDate = DateTime.Now.Date.ToShortDateString(),
                 TimeSlot = "A24",
                 //Classroom = "C211", // Maybe null
                 //Room = 294, // Maybe null
@@ -85,7 +85,7 @@ namespace Schedule.Test
 
             var generatedTimetables = timetableService.GenerateSemesterSchedule(timetableDto);
 
-            Assert.That(generatedTimetables, Has.Count.EqualTo(12));
+            Assert.That(generatedTimetables, Has.Count.EqualTo(6));
         }
     }
 }

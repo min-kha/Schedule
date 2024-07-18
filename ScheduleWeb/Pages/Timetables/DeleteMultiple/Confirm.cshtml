@@ -1,0 +1,71 @@
+﻿@page
+@model ScheduleWeb.Pages.Timetables.DeleteMultiple.ConfirmModel
+@{
+}
+
+<h1>Xác nhận xóa hàng loạt lịch</h1>
+
+
+@if (Model.Timetables != null && Model.Timetables.Any())
+{
+<p>Bạn có chắc muốn xóa lịch từ ngày @(Model.StartTime?.ToString("d/M/yyyy") ?? "đầu") đến @(Model.EndTime?.ToString("d/M/yyyy") ?? "hết") không? Xóa nhầm là khổ sinh viên, giáo viên FPT đấy :))</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Classroom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Room)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Slot)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Subject)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Timetables[0].Teacher)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Timetables)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Classroom.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Room.RoomNumber)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Slot.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subject.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Teacher.Name)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<form method="post">
+    <input type="hidden" asp-for="StartTime" />
+    <input type="hidden" asp-for="EndTime" />
+
+    <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+}
+else
+{
+    <p>Không có dữ liệu cần xóa</p>
+}

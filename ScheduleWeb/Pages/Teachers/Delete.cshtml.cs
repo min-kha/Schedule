@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
@@ -52,8 +53,23 @@ namespace ScheduleWeb.Pages.Teachers
             if (teacher != null)
             {
                 Teacher = teacher;
-                _context.Teachers.Remove(Teacher);
-                await _context.SaveChangesAsync();
+                try
+                {
+                    _context.Teachers.Remove(Teacher);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    if (ex.InnerException is SqlException sqlEx && sqlEx.Number == 547)
+                    {
+                        ModelState.AddModelError(string.Empty, "Giáo viên đã được xếp lịch dạy, không thể xóa bây giờ.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Lỗi không mong muốn xảy ra.");
+                    }
+                    return Page();
+                }
             }
 
             return RedirectToPage("./Index");

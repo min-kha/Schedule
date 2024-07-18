@@ -11,6 +11,6 @@ namespace ScheduleService.Models
         public string? Room { get; set; }
         public string? Teacher { get; set; }
         public string? TimeSlot { get; set; } // slot 150ph
-        public DateTime StartDate { get; set; }
+        public string StartDate { get; set; }
     }
 }

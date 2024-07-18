@@ -1,0 +1,35 @@
+﻿@page
+@model ScheduleWeb.Pages.Timetables.DeleteMultiple.IndexModel
+@{
+}
+<h1>Delete Timetables</h1>
+
+<form method="post">
+    <div>
+        <label>Chọn khoảng thời gian muốn xóa:</label>
+        <input type="datetime-local" class="form-control-sm" asp-for="StartTime" />
+        <input type="datetime-local" class="form-control-sm" asp-for="EndTime" />
+    </div>
+@* 
+    <div>
+        <label>Select Teacher:</label>
+        <select asp-for="SelectedTeacherId" asp-items="Model.TeacherOptions"></select>
+    </div>
+
+    <div>
+        <label>Select Classroom:</label>
+        <select asp-for="SelectedClassroomId" asp-items="Model.ClassroomOptions"></select>
+    </div>
+
+    <div>
+        <label>Select Room:</label>
+        <select asp-for="SelectedRoomId" asp-items="Model.RoomOptions"></select>
+    </div>
+
+    <div>
+        <label>Select Subject:</label>
+        <select asp-for="SelectedSubjectId" asp-items="Model.SubjectOptions"></select>
+    </div> *@
+
+    <button class="btn btn-warning" type="submit">Tiếp theo</button>
+</form>

@@ -28,7 +28,13 @@ namespace ScheduleWeb.Pages.Timetables
                 return NotFound();
             }
 
-            var timetable = await _context.Timetables.FirstOrDefaultAsync(m => m.Id == id);
+            var timetable = await _context.Timetables
+                .Include(t=>t.Classroom)
+                .Include(t=>t.Room)
+                .Include(t=>t.Slot)
+                .Include(t=>t.Subject)
+                .Include(t=>t.Teacher)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (timetable == null)
             {
@@ -55,8 +61,8 @@ namespace ScheduleWeb.Pages.Timetables
                 _context.Timetables.Remove(Timetable);
                 await _context.SaveChangesAsync();
             }
-
-            return RedirectToPage("./Index");
+            TempData["SuccessMessage"] = "Xóa thành công";
+            return RedirectToPage("./Rooms");
         }
     }
 }

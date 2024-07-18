@@ -12,31 +12,36 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
+        @* <span class="alert-danger">@ViewData["ErrorMessage"]</span> *@
+        <span class="text-success">
+            @TempData["SuccessMessage"]
+        </span>
+
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Timetable.SlotId" class="control-label"></label>
-                <select asp-for="Timetable.SlotId" class ="form-control" asp-items="ViewBag.SlotId"></select>
+                <select asp-for="Timetable.SlotId" class="form-control" asp-items="ViewBag.SlotId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Timetable.ClassroomId" class="control-label"></label>
-                <select asp-for="Timetable.ClassroomId" class ="form-control" asp-items="ViewBag.ClassroomId"></select>
+                <select asp-for="Timetable.ClassroomId" class="form-control" asp-items="ViewBag.ClassroomId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Timetable.TeacherId" class="control-label"></label>
-                <select asp-for="Timetable.TeacherId" class ="form-control" asp-items="ViewBag.TeacherId"></select>
+                <select asp-for="Timetable.TeacherId" class="form-control" asp-items="ViewBag.TeacherId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Timetable.RoomId" class="control-label"></label>
-                <select asp-for="Timetable.RoomId" class ="form-control" asp-items="ViewBag.RoomId"></select>
+                <select asp-for="Timetable.RoomId" class="form-control" asp-items="ViewBag.RoomId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Timetable.SubjectId" class="control-label"></label>
-                <select asp-for="Timetable.SubjectId" class ="form-control" asp-items="ViewBag.SubjectId"></select>
+                <select asp-for="Timetable.SubjectId" class="form-control" asp-items="ViewBag.SubjectId"></select>
             </div>
             <div class="form-group">
                 <label asp-for="Timetable.Date" class="control-label"></label>
-                <input asp-for="Timetable.Date" class="form-control" />
+                <input asp-for="Timetable.Date" type="date" class="form-control" />
                 <span asp-validation-for="Timetable.Date" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -51,5 +56,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

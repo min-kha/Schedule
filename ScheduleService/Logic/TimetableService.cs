@@ -1,4 +1,6 @@
-﻿using ScheduleCore.Entities;
+﻿using Microsoft.Data.SqlClient.Server;
+using Microsoft.EntityFrameworkCore;
+using ScheduleCore.Entities;
 using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
 using ScheduleService.Utils;
@@ -34,7 +36,7 @@ namespace ScheduleService.Logic
                 {
                     timetableExtends.Add(new TimetableExtend { Timetable = null, TimetableDtoId = index, Message = ex.Message });
                 }
-                catch (Exception ex )
+                catch (Exception ex)
                 {
                     Console.WriteLine("***Error: GenerateScheduleAll - " + ex.Message);
                     timetableExtends.Add(new TimetableExtend { Timetable = null, TimetableDtoId = index, Message = "Lỗi không xác định" });
@@ -43,10 +45,98 @@ namespace ScheduleService.Logic
 
             return timetableExtends;
         }
+        public async Task<string?> CheckTimetableConflictForEditAsync(Timetable timetable)
+{
+    var conflictingTimetable = await _context.Timetables
+        .Include(t => t.Classroom)
+        .Include(t => t.Room)
+        .Include(t => t.Slot)
+        .Include(t => t.Subject)
+        .Include(t => t.Teacher)
+        .FirstOrDefaultAsync(t =>
+        (t.TeacherId == timetable.TeacherId ||
+            t.RoomId == timetable.RoomId ||
+            t.ClassroomId == timetable.ClassroomId) &&
+            t.Date.Date == timetable.Date.Date &&
+            t.SlotId == timetable.SlotId &&
+            t.Id != timetable.Id); // Exclude the current timetable being edited
+
+    if (conflictingTimetable != null)
+    {
+        var message = $"Trùng với thời gian biểu hiện tại: (";
+
+        if (conflictingTimetable.TeacherId == timetable.TeacherId)
+        {
+            message += $"Giáo viên {conflictingTimetable.Teacher?.Name}; ";
+        }
+
+        if (conflictingTimetable.RoomId == timetable.RoomId)
+        {
+            message += $"Phòng {conflictingTimetable.Room?.RoomNumber}; ";
+        }
+
+        if (conflictingTimetable.ClassroomId == timetable.ClassroomId)
+        {
+            message += $"Lớp {conflictingTimetable.Classroom?.Code}; ";
+        }
+
+        message += ") vào ngày: " + conflictingTimetable.Date.ToString("d/M/yyyy") + " - " + conflictingTimetable.Slot?.Name;
+
+        return message;
+    }
+    else
+    {
+        return null; // Không có xung đột
+    }
+}
+
+        public async Task<string?> CheckTimetableConflictAsync(Timetable timetable)
+        {
+            var conflictingTimetable = await _context.Timetables
+                .Include(t => t.Classroom)
+                .Include(t => t.Room)
+                .Include(t => t.Slot)
+                .Include(t => t.Subject)
+                .Include(t => t.Teacher)
+                .FirstOrDefaultAsync(t =>
+                (t.TeacherId == timetable.TeacherId ||
+                    t.RoomId == timetable.RoomId ||
+                    t.ClassroomId == timetable.ClassroomId) &&
+                    t.Date.Date == timetable.Date.Date &&
+                    t.SlotId == timetable.SlotId);
+
+            if (conflictingTimetable != null)
+            {
+                var message = $"Trùng với thời gian biểu hiện tại: (";
+
+                if (conflictingTimetable.TeacherId == timetable.TeacherId)
+                {
+                    message += $"Giáo viên {conflictingTimetable.Teacher?.Name}; ";
+                }
+
+                if (conflictingTimetable.RoomId == timetable.RoomId)
+                {
+                    message += $"Phòng {conflictingTimetable.Room?.RoomNumber}; ";
+                }
+
+                if (conflictingTimetable.ClassroomId == timetable.ClassroomId)
+                {
+                    message += $"Lớp {conflictingTimetable.Classroom?.Code}; ";
+                }
+
+                message += ") vào ngày: " + conflictingTimetable.Date.ToString("d/M/yyyy") + " - " + conflictingTimetable.Slot?.Name;
+
+                return message;
+            }
+            else
+            {
+                return null; // Không có xung đột
+            }
+        }
 
         public List<Timetable> GenerateSemesterSchedule(TimetableDto timetableDto)
         {
-            if (timetableDto.TimeSlot == null || !Util.IsTimeSlotDouble(timetableDto.TimeSlot)) throw new InvalidDataException();
+            if (timetableDto.TimeSlot == null || !Util.IsTimeSlotDouble(timetableDto.TimeSlot)) throw new InvalidDataException("Không tìm thấy TimeSlot Double phù hợp với " + timetableDto?.TimeSlot);
             var timetables = new List<Timetable>();
 
             var classroom = GetClassroom(timetableDto.Classroom);
@@ -54,11 +144,14 @@ namespace ScheduleService.Logic
             var room = GetRoom(timetableDto.Room);
             var teacher = GetTeacher(timetableDto.Teacher);
             var (firstSlot, secondSlot, firstWeekTime, secondWeekTime) = GetTimeSlots(timetableDto.TimeSlot.ToString()!);
-
+            if (!DateTime.TryParseExact(timetableDto.StartDate, "d/M/yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTime startDate))
+            {
+                throw new InvalidDataException("Sai format StartDate. Đảm bảo bạn nhập theo d/M/yyyy");
+            }
             if (subject != null)
             {
-                var firstDate = Util.FindNextDayOfWeek(timetableDto.StartDate, firstWeekTime);
-                var secondDate = Util.FindNextDayOfWeek(timetableDto.StartDate, secondWeekTime);
+                var firstDate = Util.FindNextDayOfWeek(startDate, firstWeekTime);
+                var secondDate = Util.FindNextDayOfWeek(startDate, secondWeekTime);
                 // đổi chỗ
                 if (firstDate > secondDate)
                 {
@@ -69,7 +162,6 @@ namespace ScheduleService.Logic
                 {
                     if (i % 2 == 0)
                     {
-
                         timetables.Add(new Timetable
                         {
                             Classroom = classroom,
@@ -80,11 +172,11 @@ namespace ScheduleService.Logic
                             RoomId = room?.Id,
                             Teacher = teacher,
                             TeacherId = teacher?.Id,
+                            SlotId = firstSlot.Id,
                             Slot = firstSlot,
                             Date = firstDate
                         });
                         firstDate = firstDate.AddDays(7);
-
                     }
                     else
                     {
@@ -98,6 +190,7 @@ namespace ScheduleService.Logic
                             RoomId = room?.Id,
                             Teacher = teacher,
                             TeacherId = teacher?.Id,
+                            SlotId = secondSlot.Id,
                             Slot = secondSlot,
                             Date = secondDate
                         });
@@ -125,9 +218,13 @@ namespace ScheduleService.Logic
 
         private Room? GetRoom(string? roomNumber)
         {
-            bool isInt = int.TryParse(roomNumber, out var roomId);
-            if (string.IsNullOrEmpty(roomNumber) || !isInt)
+            if (string.IsNullOrEmpty(roomNumber))
                 return null;
+            if (!int.TryParse(roomNumber, out var roomId))
+            {
+                throw new InvalidDataException("Sai format roomNumber, với roomNumber = " + roomNumber);
+            }
+
             return _context.Rooms.FirstOrDefault(r => r.RoomNumber == roomId) ?? throw new InvalidDataException("Không tìm thấy phòng học với roomNumber = " + roomNumber);
         }
 

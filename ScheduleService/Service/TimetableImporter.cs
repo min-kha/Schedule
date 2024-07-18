@@ -31,7 +31,7 @@ namespace ScheduleService.Service
             // Đọc file lấy list timetableDto
             IEnumerable<TimetableDto> timetableDtos = await _input.ReadFromFileAsync(filePath);
 
-            IEnumerable<TimetableExtend> timetableExtends = _timetable.GenerateScheduleAll(timetableDtos).Where(timetableExtend => timetableExtend != null && timetableExtend.Timetable != null);
+            IEnumerable<TimetableExtend> timetableExtends = _timetable.GenerateScheduleAll(timetableDtos);
             return await SaveToDatabase(timetableExtends);
         }
 
@@ -40,13 +40,14 @@ namespace ScheduleService.Service
             var importResult = new ImportResult<TimetableExtend>();
             foreach (var timetableExtend in timetableExtends)
             {
-                if(timetableExtend.Timetable == null)
+                if (timetableExtend.Timetable == null)
                 {
+                    importResult.ErrorImporteds.Add(timetableExtend);
                     continue;
                 }
                 try
                 {
-                    string? conflictMessage = await CheckTimetableConflictAsync(timetableExtend.Timetable);
+                    string? conflictMessage = await _timetable.CheckTimetableConflictAsync(timetableExtend.Timetable);
                     if (conflictMessage != null)
                     {
                         timetableExtend.Message = conflictMessage;
@@ -89,44 +90,7 @@ namespace ScheduleService.Service
             return importResult;
         }
 
-        public async Task<string?> CheckTimetableConflictAsync(Timetable timetable)
-        {
-            var conflictingTimetable = await _context.Timetables.FirstOrDefaultAsync(t =>
-                (t.TeacherId == timetable.TeacherId ||
-                    t.RoomId == timetable.RoomId ||
-                    t.ClassroomId == timetable.ClassroomId) &&
-                    t.Date.Date == timetable.Date.Date &&
-                    t.Slot == timetable.Slot);
-
-            if (conflictingTimetable != null)
-            {
-                // Xây dựng thông báo lỗi chi tiết
-                var message = $"The timetable conflicts with an existing timetable for:";
-
-                if (conflictingTimetable.TeacherId == timetable.TeacherId)
-                {
-                    message += " TeacherId " + timetable.TeacherId;
-                }
-
-                if (conflictingTimetable.RoomId == timetable.RoomId)
-                {
-                    message += " RoomId " + timetable.RoomId;
-                }
-
-                if (conflictingTimetable.ClassroomId == timetable.ClassroomId)
-                {
-                    message += " ClassId " + timetable.ClassroomId;
-                }
-
-                message += " on Date " + timetable.Date + " and Slot " + timetable.Slot;
-
-                return message;
-            }
-            else
-            {
-                return null; // Không có xung đột
-            }
-        }
+        
         public static string GetDuplicateKeyInfo(string errorMessage)
         {
             // Tìm kiếm chuỗi "Violation of UNIQUE KEY constraint"

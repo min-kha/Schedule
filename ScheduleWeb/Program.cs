@@ -1,10 +1,21 @@
+using FileService;
+using FileService.Interface;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Logic;
+using ScheduleService.Logic.Interfaces;
+using ScheduleService.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddTransient<ITimetableImporter, TimetableImporter>();
+builder.Services.AddTransient<ITimetableService, TimetableService>();
+builder.Services.AddTransient<IInputService, InputService>();
+builder.Services.AddSingleton<IFileService, CsvFileService>();
+builder.Services.AddSingleton<IFileService, JsonFileService>();
+builder.Services.AddSingleton<IFileService, XmlFileService>();
 builder.Services.AddDbContext<ScheduleContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Schedule")));
 var app = builder.Build();
 
