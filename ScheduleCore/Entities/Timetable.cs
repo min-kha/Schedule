@@ -5,6 +5,11 @@ namespace ScheduleCore.Entities
 {
     public partial class Timetable
     {
+        public Timetable()
+        {
+            Attends = new HashSet<Attend>();
+        }
+
         public int Id { get; set; }
         public int? SlotId { get; set; }
         public int? ClassroomId { get; set; }
@@ -18,5 +23,6 @@ namespace ScheduleCore.Entities
         public virtual Slot? Slot { get; set; }
         public virtual Subject? Subject { get; set; }
         public virtual Teacher? Teacher { get; set; }
+        public virtual ICollection<Attend> Attends { get; set; }
     }
 }

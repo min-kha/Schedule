@@ -13,10 +13,10 @@ namespace ScheduleWeb.Pages.Timetables
 {
     public class EditModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
         private readonly ITimetableService _timetableService;
 
-        public EditModel(ScheduleCore.Entities.ScheduleContext context, ITimetableService timetableService)
+        public EditModel(ScheduleCore.Entities.StudentManagementContext context, ITimetableService timetableService)
         {
             _context = context;
             _timetableService = timetableService;

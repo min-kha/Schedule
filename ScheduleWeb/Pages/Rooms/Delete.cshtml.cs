@@ -12,9 +12,9 @@ namespace ScheduleWeb.Pages.Rooms
 {
     public class DeleteModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public DeleteModel(ScheduleCore.Entities.ScheduleContext context)
+        public DeleteModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }

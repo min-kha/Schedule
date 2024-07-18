@@ -10,13 +10,13 @@ namespace Schedule.Test
     [TestFixture]
     public class TimetableMapperTests
     {
-        private Mock<ScheduleContext> _mockContext;
+        private Mock<StudentManagementContext> _mockContext;
         private TimetableService _timetableService;
 
         [SetUp]
         public void Setup()
         {
-            _mockContext = new Mock<ScheduleContext>();
+            _mockContext = new Mock<StudentManagementContext>();
             _timetableService = new TimetableService(_mockContext.Object);
         }
 
@@ -70,7 +70,7 @@ namespace Schedule.Test
         [Test]
         public void GenerateSemesterSchedule_ValidData_GeneratesTimetables()
         {
-            var context = new ScheduleContext(); // Sử dụng ScheduleContext thực tế
+            var context = new StudentManagementContext(); // Sử dụng ScheduleContext thực tế
             var timetableService = new TimetableService(context);
 
             var timetableDto = new TimetableDto

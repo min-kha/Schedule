@@ -21,7 +21,7 @@ namespace Schedule.Test.Service
                 new JsonFileService(), new CsvFileService(), new XmlFileService()
             };
             IInputService inputService = new InputService(fileServices);
-            var context = new ScheduleContext(); // Sử dụng ScheduleContext thực tế
+            var context = new StudentManagementContext(); // Sử dụng ScheduleContext thực tế
             var timetableService = new TimetableService(context);
             // Arrange
             var timetableImporter = new TimetableImporter(inputService, timetableService, context);

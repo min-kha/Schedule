@@ -2,7 +2,7 @@
 using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
 
-namespace ScheduleService.Service
+namespace ScheduleService.Service.Interfaces
 {
     public interface ITimetableImporter
     {

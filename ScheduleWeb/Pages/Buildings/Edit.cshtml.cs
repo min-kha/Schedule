@@ -12,9 +12,9 @@ namespace ScheduleWeb.Pages.Buildings
 {
     public class EditModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public EditModel(ScheduleCore.Entities.ScheduleContext context)
+        public EditModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }

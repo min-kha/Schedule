@@ -10,8 +10,8 @@ namespace ScheduleService.Logic
 {
     public class TimetableService : ITimetableService
     {
-        private readonly ScheduleContext _context;
-        public TimetableService(ScheduleContext context)
+        private readonly StudentManagementContext _context;
+        public TimetableService(StudentManagementContext context)
         {
             _context = context;
         }

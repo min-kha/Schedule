@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
-using ScheduleService.Service;
+using ScheduleService.Service.Interfaces;
 
 namespace ScheduleWeb.Pages.Timetables.Import
 {

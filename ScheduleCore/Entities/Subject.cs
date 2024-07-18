@@ -7,6 +7,8 @@ namespace ScheduleCore.Entities
     {
         public Subject()
         {
+            Classrooms = new HashSet<Classroom>();
+            Marks = new HashSet<Mark>();
             Timetables = new HashSet<Timetable>();
         }
 
@@ -17,6 +19,8 @@ namespace ScheduleCore.Entities
         public string? Description { get; set; }
         public int CreditSlot { get; set; }
 
+        public virtual ICollection<Classroom> Classrooms { get; set; }
+        public virtual ICollection<Mark> Marks { get; set; }
         public virtual ICollection<Timetable> Timetables { get; set; }
     }
 }

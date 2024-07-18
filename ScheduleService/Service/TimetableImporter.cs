@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using ScheduleCore.Entities;
 using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
+using ScheduleService.Service.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,9 +17,9 @@ namespace ScheduleService.Service
     {
         private readonly IInputService _input;
         private readonly ITimetableService _timetable;
-        private readonly ScheduleContext _context;
+        private readonly StudentManagementContext _context;
 
-        public TimetableImporter(IInputService input, ITimetableService timetable, ScheduleContext context)
+        public TimetableImporter(IInputService input, ITimetableService timetable, StudentManagementContext context)
         {
             _input = input;
             _timetable = timetable;

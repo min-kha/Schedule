@@ -11,9 +11,9 @@ namespace ScheduleWeb.Pages.Subjects
 {
     public class DetailsModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public DetailsModel(ScheduleCore.Entities.ScheduleContext context)
+        public DetailsModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }

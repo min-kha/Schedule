@@ -11,9 +11,9 @@ namespace ScheduleWeb.Pages.Rooms
 {
     public class CreateModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public CreateModel(ScheduleCore.Entities.ScheduleContext context)
+        public CreateModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }

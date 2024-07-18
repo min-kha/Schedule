@@ -7,9 +7,9 @@ namespace ScheduleWeb.Pages.Timetables
 {
     public class RoomsModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public RoomsModel(ScheduleCore.Entities.ScheduleContext context)
+        public RoomsModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }

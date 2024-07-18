@@ -8,9 +8,9 @@ namespace ScheduleWeb.Pages.Timetables.DeleteMultiple
 {
     public class ConfirmModel : PageModel
     {
-        private readonly ScheduleContext _context;
+        private readonly StudentManagementContext _context;
 
-        public ConfirmModel(ScheduleContext context)
+        public ConfirmModel(StudentManagementContext context)
         {
             _context = context;
         }

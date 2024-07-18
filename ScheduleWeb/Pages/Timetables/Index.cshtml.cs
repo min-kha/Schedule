@@ -13,9 +13,9 @@ namespace ScheduleWeb.Pages.Timetables
 {
     public class IndexModel : PageModel
     {
-        private readonly ScheduleCore.Entities.ScheduleContext _context;
+        private readonly ScheduleCore.Entities.StudentManagementContext _context;
 
-        public IndexModel(ScheduleCore.Entities.ScheduleContext context)
+        public IndexModel(ScheduleCore.Entities.StudentManagementContext context)
         {
             _context = context;
         }
