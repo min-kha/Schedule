@@ -1,0 +1,67 @@
+﻿@page
+@model ScheduleWeb.Pages.Marks.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Mark1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Percent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Classroom)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Student)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mark[0].Subject)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Mark) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mark1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Percent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Classroom.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Student.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Subject.Code)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -43,9 +43,7 @@ namespace ScheduleCore.Entities
             {
                 entity.ToTable("Attend");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
@@ -115,9 +113,7 @@ namespace ScheduleCore.Entities
             {
                 entity.ToTable("Mark");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ClassroomId).HasColumnName("classroomId");
 
@@ -205,9 +201,7 @@ namespace ScheduleCore.Entities
                 entity.HasIndex(e => e.Code, "student_code_unique")
                     .IsUnique();
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.Address)
                     .HasMaxLength(255)
@@ -234,9 +228,7 @@ namespace ScheduleCore.Entities
             {
                 entity.ToTable("StudentClassroom");
 
-                entity.Property(e => e.Id)
-                    .ValueGeneratedNever()
-                    .HasColumnName("id");
+                entity.Property(e => e.Id).HasColumnName("id");
 
                 entity.Property(e => e.ClassroomId).HasColumnName("classroomId");
 

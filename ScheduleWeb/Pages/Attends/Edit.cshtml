@@ -1,0 +1,46 @@
+﻿@page
+@model ScheduleWeb.Pages.Attends.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>Attend</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Attend.Id" />
+            <div class="form-group">
+                <label asp-for="Attend.TimeTableId" class="control-label"></label>
+                <select asp-for="Attend.TimeTableId" class="form-control" asp-items="ViewBag.TimeTableId"></select>
+                <span asp-validation-for="Attend.TimeTableId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Attend.StudentId" class="control-label"></label>
+                <select asp-for="Attend.StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
+                <span asp-validation-for="Attend.StudentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Attend.Status" class="control-label"></label>
+                <input asp-for="Attend.Status" class="form-control" />
+                <span asp-validation-for="Attend.Status" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
