@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Subjects.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Create";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 

@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Timetables.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Edit";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 

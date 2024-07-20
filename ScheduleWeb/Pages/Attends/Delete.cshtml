@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Attends.DeleteModel
 
 @{
-    ViewData["Title"] = "Delete";
+    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Delete";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 

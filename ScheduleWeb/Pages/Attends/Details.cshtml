@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Attends.DetailsModel
 
 @{
-    ViewData["Title"] = "Details";
+    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Details";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 

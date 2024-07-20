@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Teachers.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    var folderName = new System.IO.DirectoryInfo(Request.Path).Name; ViewData["Title"] = $"{folderName} List";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
