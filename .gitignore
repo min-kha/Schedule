@@ -7,7 +7,7 @@ nupkg/
 
 # Visual Studio Code
 .vscode
-
+appsettings.json
 # Rider
 .idea
 
