@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Models;
+using ScheduleService.Service.Interfaces;
 
 namespace ScheduleHost.Controllers
 {
@@ -15,10 +17,26 @@ namespace ScheduleHost.Controllers
     public class TimetablesController : ControllerBase
     {
         private readonly StudentManagementContext _context;
+        private readonly ITimetableImporter _importer;
 
-        public TimetablesController(StudentManagementContext context)
+        public TimetablesController(StudentManagementContext context, ITimetableImporter importer)
         {
             _context = context;
+            _importer = importer;
+        }
+
+        [HttpPost("import")]
+        public async Task<ActionResult<ImportResult<TimetableExtend>>> ImportSchedule([FromBody] string filePath)
+        {
+            try
+            {
+                ImportResult<TimetableExtend> importResult = await _importer.ImportNewScheduleFromFileAsync(filePath);
+                return Ok(importResult);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred while importing the schedule: {ex.Message}");
+            }
         }
 
         [HttpGet("student")]

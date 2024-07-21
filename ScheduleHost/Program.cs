@@ -1,5 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Service.Interfaces;
+using ScheduleService.Service;
+using FileService.Interface;
+using FileService;
+using ScheduleService.Logic.Interfaces;
+using ScheduleService.Logic;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +20,12 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddTransient<ITimetableImporter, TimetableImporter>();
+builder.Services.AddTransient<ITimetableService, TimetableService>();
+builder.Services.AddTransient<IInputService, InputService>();
+builder.Services.AddSingleton<IFileService, CsvFileService>();
+builder.Services.AddSingleton<IFileService, JsonFileService>();
+builder.Services.AddSingleton<IFileService, XmlFileService>();
 builder.Services.AddDbContext<StudentManagementContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Schedule")));
 var app = builder.Build();
 

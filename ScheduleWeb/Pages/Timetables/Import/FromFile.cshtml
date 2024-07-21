@@ -1,7 +1,7 @@
 ﻿@page
 @model ScheduleWeb.Pages.Timetables.Import.FromFileModel
 @{
-    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Import File";
+    ViewData["Title"] = $"Import File";
 }
 
 <h1>Upload File</h1>
