@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\InputService\FileService.csproj" />
     <ProjectReference Include="..\ScheduleCore\ScheduleCore.csproj" />
   </ItemGroup>

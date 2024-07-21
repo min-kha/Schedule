@@ -28,17 +28,14 @@ namespace ScheduleWeb.Pages.Timetables.Import
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
+            const string UPLOAD_FOLDER = "uploads";
+            IFormFile file = Request.Form.Files[0];
+            var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, UPLOAD_FOLDER);
             if (!Directory.Exists(uploadsFolder))
             {
                 Directory.CreateDirectory(uploadsFolder);
             }
-
-            var filePath = Path.Combine(uploadsFolder, Path.GetFileName(Request.Form.Files[0].FileName));
-            using (var fileStream = new FileStream(filePath, FileMode.Create))
-            {
-                await Request.Form.Files[0].CopyToAsync(fileStream);
-            }
+            string filePath = await _inputService.CopyFileToHost(uploadsFolder, file);
 
             try
             {

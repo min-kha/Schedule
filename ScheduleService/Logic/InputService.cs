@@ -1,5 +1,6 @@
 ﻿using FileService;
 using FileService.Interface;
+using Microsoft.AspNetCore.Http;
 using ScheduleService.Logic.Interfaces;
 using ScheduleService.Models;
 
@@ -17,7 +18,29 @@ public class InputService : IInputService
         _csvFileService = fileServices.First(s => s.GetType() == typeof(CsvFileService));
     }
 
+    public async Task<string> CopyFileToHost(string uploadsFolder, IFormFile file)
+    {
 
+
+        // Get the original file name
+        string originalFileName = Path.GetFileNameWithoutExtension(file.FileName);
+        string fileExtension = Path.GetExtension(file.FileName);
+
+        // Create a timestamp string
+        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmssfff");
+
+        // Combine the original file name, timestamp, and extension
+        string newFileName = $"{originalFileName}_{timestamp}{fileExtension}";
+
+        // Combine the uploads folder path and the new file name
+        string filePath = Path.Combine(uploadsFolder, newFileName);
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(fileStream);
+        }
+
+        return filePath;
+    }
     public async Task<IEnumerable<TimetableDto>> ReadFromFileAsync(string filePath)
     {
         string tempFilePath = Path.GetFileNameWithoutExtension(filePath) + "-temp" + Path.GetExtension(filePath);
