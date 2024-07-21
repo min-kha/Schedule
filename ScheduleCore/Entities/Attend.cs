@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
@@ -9,8 +10,9 @@ namespace ScheduleCore.Entities
         public int TimeTableId { get; set; }
         public int StudentId { get; set; }
         public int? Status { get; set; }
-
+        [JsonIgnore]
         public virtual Student Student { get; set; } = null!;
+        [JsonIgnore]
         public virtual Timetable TimeTable { get; set; } = null!;
     }
 }

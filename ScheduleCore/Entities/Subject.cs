@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
@@ -19,8 +20,11 @@ namespace ScheduleCore.Entities
         public string? Description { get; set; }
         public int CreditSlot { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Classroom> Classrooms { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Mark> Marks { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Timetable> Timetables { get; set; }
     }
 }

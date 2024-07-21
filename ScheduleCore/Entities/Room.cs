@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
@@ -15,8 +16,9 @@ namespace ScheduleCore.Entities
         public int RoomNumber { get; set; }
         public int BuildingId { get; set; }
         public string? Note { get; set; }
-
+        [JsonIgnore]
         public virtual Building Building { get; set; } = null!;
+        [JsonIgnore]
         public virtual ICollection<Timetable> Timetables { get; set; }
     }
 }

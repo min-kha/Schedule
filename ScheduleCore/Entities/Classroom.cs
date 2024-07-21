@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
@@ -18,10 +19,13 @@ namespace ScheduleCore.Entities
         public int Semesters { get; set; }
         public int Year { get; set; }
         public int? SubjectId { get; set; }
-
+        [JsonIgnore]
         public virtual Subject? Subject { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Mark> Marks { get; set; }
+        [JsonIgnore]
         public virtual ICollection<StudentClassroom> StudentClassrooms { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Timetable> Timetables { get; set; }
     }
 }

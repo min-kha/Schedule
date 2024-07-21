@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ScheduleCore.Entities
@@ -14,7 +15,7 @@ namespace ScheduleCore.Entities
         public string Name { get; set; } = null!;
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }
-
+        [JsonIgnore]
         public virtual ICollection<Timetable> Timetables { get; set; }
     }
 }

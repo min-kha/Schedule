@@ -21,6 +21,57 @@ namespace ScheduleHost.Controllers
             _context = context;
         }
 
+        [HttpGet("student")]
+        public async Task<ActionResult<IEnumerable<Timetable>>> GetTimetablesForStudent(string studentCode, string selectedWeek)
+        {
+            var selectedYear = int.Parse(selectedWeek.Substring(0, 4));
+            var selectedWeekNumber = int.Parse(selectedWeek.Substring(6));
+
+            var firstDayOfWeek = CultureInfo.CurrentCulture.Calendar
+                .AddWeeks(new DateTime(selectedYear, 1, 1), selectedWeekNumber - 1)
+                .AddDays(-((int)new DateTime(selectedYear, 1, 1).DayOfWeek) + 1);
+            var lastDayOfWeek = firstDayOfWeek.AddDays(4);
+            // Find classroom by studentCode
+            List<int> classroomIds = _context.StudentClassrooms.Where(sc => sc.Student.Code.ToUpper() == studentCode.ToUpper() && sc.Classroom != null).Select(sc=>sc.ClassroomId).ToList();
+            var timetablesInSelectedWeek = await _context.Timetables
+                .Include(t => t.Classroom)
+                .Include(t => t.Room)
+                .Include(t => t.Slot)
+                .Include(t => t.Subject)
+                .Include(t => t.Teacher)
+                .Where(t => classroomIds.Contains(t.ClassroomId??-1) && t.Date >= firstDayOfWeek && t.Date <= lastDayOfWeek)
+                .OrderBy(t => t.Date)
+                .ThenBy(t => t.SlotId)
+                .ToListAsync();
+
+            return timetablesInSelectedWeek;
+        }
+
+        [HttpGet("classroom")]
+        public async Task<ActionResult<IEnumerable<Timetable>>> GetTimetablesForClassroom(int classroomId, string selectedWeek)
+        {
+            var selectedYear = int.Parse(selectedWeek.Substring(0, 4));
+            var selectedWeekNumber = int.Parse(selectedWeek.Substring(6));
+
+            var firstDayOfWeek = CultureInfo.CurrentCulture.Calendar
+                .AddWeeks(new DateTime(selectedYear, 1, 1), selectedWeekNumber - 1)
+                .AddDays(-((int)new DateTime(selectedYear, 1, 1).DayOfWeek) + 1);
+            var lastDayOfWeek = firstDayOfWeek.AddDays(4);
+
+            var timetablesInSelectedWeek = await _context.Timetables
+                .Include(t => t.Classroom)
+                .Include(t => t.Room)
+                .Include(t => t.Slot)
+                .Include(t => t.Subject)
+                .Include(t => t.Teacher)
+                .Where(t => t.ClassroomId == classroomId && t.Date >= firstDayOfWeek && t.Date <= lastDayOfWeek)
+                .OrderBy(t => t.Date)
+                .ThenBy(t => t.SlotId)
+                .ToListAsync();
+
+            return timetablesInSelectedWeek;
+        }
+
         [HttpGet("teacher")]
         public async Task<ActionResult<IEnumerable<Timetable>>> GetTimetablesForTeacher(int teacherId, string selectedWeek)
         {

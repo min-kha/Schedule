@@ -18,11 +18,9 @@ namespace ScheduleWeb.Pages.Timetables
     public class IndexModel : PageModel
     {
         private readonly ApiService _apiService;
-        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(IHttpClientFactory httpClientFactory, ApiService apiService)
+        public IndexModel(ApiService apiService)
         {
-            _httpClientFactory = httpClientFactory;
             _apiService = apiService;
         }
 
@@ -35,16 +33,16 @@ namespace ScheduleWeb.Pages.Timetables
         public IList<Timetable> WeeklyTimetable { get; set; } = new List<Timetable>();
 
         [BindProperty(SupportsGet = true)]
-        public int TeacherId { get; set; }
+        public int ClassroomId { get; set; }
 
-        public SelectList SelectTeachers { get; set; }
+        public SelectList SelectClassrooms { get; set; }
         public string ErrorMessage { get; set; }
 
         public async Task OnGetAsync()
         {
-            var teachers = await _apiService.GetAsync<List<Teacher>>(ApiEnpoint.API_TEACHER);
+            var Classrooms = await _apiService.GetAsync<List<ScheduleCore.Entities.Classroom>>(ApiEnpoint.API_CLASROOM);
 
-            SelectTeachers = new SelectList(teachers, nameof(Teacher.Id), nameof(Teacher.Name));
+            SelectClassrooms = new SelectList(Classrooms, nameof(ScheduleCore.Entities.Classroom.Id), nameof(ScheduleCore.Entities.Classroom.Name));
             // Parse selected week to get year and week number
             var selectedYear = int.Parse(SelectedWeek.Substring(0, 4));
             var selectedWeekNumber = int.Parse(SelectedWeek.Substring(6));
@@ -55,9 +53,9 @@ namespace ScheduleWeb.Pages.Timetables
                 .AddDays(-(int)new DateTime(selectedYear, 1, 1).DayOfWeek + 1);
             
             try {
-                var uriBuilder = new UriBuilder(ApiEnpoint.API_GET_TIMETABLE_TEACHER);
+                var uriBuilder = new UriBuilder(ApiEnpoint.API_GET_TIMETABLE_CLASSROOM);
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-                query["TeacherId"] = TeacherId.ToString();
+                query["ClassroomId"] = ClassroomId.ToString();
                 query["SelectedWeek"] = SelectedWeek;
                 uriBuilder.Query = query.ToString();
                 string urlWithParameters = uriBuilder.ToString();
