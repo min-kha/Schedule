@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.StudentJoinClass
+namespace ScheduleWeb.Pages.Classification
 {
     public class EditModel : PageModel
     {
-        private readonly ScheduleCore.Entities.StudentManagementContext _context;
+        private readonly StudentManagementContext _context;
 
-        public EditModel(ScheduleCore.Entities.StudentManagementContext context)
+        public EditModel(StudentManagementContext context)
         {
             _context = context;
         }
@@ -29,14 +29,14 @@ namespace ScheduleWeb.Pages.StudentJoinClass
                 return NotFound();
             }
 
-            var studentclassroom =  await _context.StudentClassrooms.FirstOrDefaultAsync(m => m.Id == id);
+            var studentclassroom = await _context.StudentClassrooms.FirstOrDefaultAsync(m => m.Id == id);
             if (studentclassroom == null)
             {
                 return NotFound();
             }
             StudentClassroom = studentclassroom;
-           ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-           ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Code");
+            ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Code");
             return Page();
         }
 
@@ -72,7 +72,7 @@ namespace ScheduleWeb.Pages.StudentJoinClass
 
         private bool StudentClassroomExists(int id)
         {
-          return (_context.StudentClassrooms?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.StudentClassrooms?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -7,19 +7,19 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.StudentJoinClass
+namespace ScheduleWeb.Pages.Classification
 {
     public class DeleteModel : PageModel
     {
-        private readonly ScheduleCore.Entities.StudentManagementContext _context;
+        private readonly StudentManagementContext _context;
 
-        public DeleteModel(ScheduleCore.Entities.StudentManagementContext context)
+        public DeleteModel(StudentManagementContext context)
         {
             _context = context;
         }
 
         [BindProperty]
-      public StudentClassroom StudentClassroom { get; set; } = default!;
+        public StudentClassroom StudentClassroom { get; set; } = default!;
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -34,7 +34,7 @@ namespace ScheduleWeb.Pages.StudentJoinClass
             {
                 return NotFound();
             }
-            else 
+            else
             {
                 StudentClassroom = studentclassroom;
             }

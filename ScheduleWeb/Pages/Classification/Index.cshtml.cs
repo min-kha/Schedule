@@ -7,18 +7,18 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.StudentJoinClass
+namespace ScheduleWeb.Pages.Classification
 {
     public class IndexModel : PageModel
     {
-        private readonly ScheduleCore.Entities.StudentManagementContext _context;
+        private readonly StudentManagementContext _context;
 
-        public IndexModel(ScheduleCore.Entities.StudentManagementContext context)
+        public IndexModel(StudentManagementContext context)
         {
             _context = context;
         }
 
-        public IList<StudentClassroom> StudentClassroom { get;set; } = default!;
+        public IList<StudentClassroom> StudentClassroom { get; set; } = default!;
 
         public async Task OnGetAsync()
         {

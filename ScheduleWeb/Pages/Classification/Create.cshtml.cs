@@ -7,32 +7,32 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ScheduleCore.Entities;
 
-namespace ScheduleWeb.Pages.StudentJoinClass
+namespace ScheduleWeb.Pages.Classification
 {
     public class CreateModel : PageModel
     {
-        private readonly ScheduleCore.Entities.StudentManagementContext _context;
+        private readonly StudentManagementContext _context;
 
-        public CreateModel(ScheduleCore.Entities.StudentManagementContext context)
+        public CreateModel(StudentManagementContext context)
         {
             _context = context;
         }
 
         public IActionResult OnGet()
         {
-        ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
-        ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Code");
+            ViewData["ClassroomId"] = new SelectList(_context.Classrooms, "Id", "Code");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Code");
             return Page();
         }
 
         [BindProperty]
         public StudentClassroom StudentClassroom { get; set; } = default!;
-        
+
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.StudentClassrooms == null || StudentClassroom == null)
+            if (!ModelState.IsValid || _context.StudentClassrooms == null || StudentClassroom == null)
             {
                 return Page();
             }
