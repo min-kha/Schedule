@@ -30,7 +30,7 @@ namespace ScheduleService.Service
         {
 
             // Đọc file lấy list timetableDto
-            IEnumerable<TimetableDto> timetableDtos = await _input.ReadFromFileAsync(filePath);
+            IEnumerable<TimetableDto> timetableDtos = await _input.ReadFromFileAsync<TimetableDto>(filePath);
 
             IEnumerable<TimetableExtend> timetableExtends = _timetable.GenerateScheduleAll(timetableDtos);
             return await SaveToDatabase(timetableExtends);

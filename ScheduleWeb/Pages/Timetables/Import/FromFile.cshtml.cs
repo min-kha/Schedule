@@ -42,7 +42,7 @@ namespace ScheduleWeb.Pages.Timetables.Import
             string filePath = await _inputService.CopyFileToHost(uploadsFolder, file);
             try
             {
-                IEnumerable<TimetableDto> timetableDtos = await _inputService.ReadFromFileAsync(filePath);
+                IEnumerable<TimetableDto> timetableDtos = await _inputService.ReadFromFileAsync<TimetableDto>(filePath);
                 TimetableDtos = timetableDtos.ToList();
 
                 ImportResult = await _apiService.PostAsync<ImportResult<TimetableExtend>>(ApiEnpoint.API_POST_SCHEDULE_FROM_FILE, filePath);

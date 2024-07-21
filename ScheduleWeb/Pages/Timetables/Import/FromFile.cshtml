@@ -4,7 +4,8 @@
     ViewData["Title"] = $"Import File";
 }
 
-<h1>Upload File</h1>
+<p>Nhập lịch học từ file theo <a href="http://localhost:5215/templates/import-schedule-template.csv"><b>TEMPLATE</b></a>, hệ thống sẽ tự động tạo lịch học căn cứ theo CreditSlot trong môn học và ngày bắt đầu.</p>
+<p>Hỗ trợ định dạng file: json, xml, csv</p>
 
 <form method="post" enctype="multipart/form-data">
     <div class="form-group">
@@ -17,7 +18,7 @@
 {
     <div class="alert alert-danger" role="alert">
         <h4 class="alert-heading">An error occurred!</h4>
-        <p>@Html.ValidationSummary(false, "", new { @class = "text-danger" })</p>
+        <p>@Html.ValidationSummary(false, "")</p>
         <hr>
         <p class="mb-0">Đã xảy ra lỗi khi nhập lịch trình. Vui lòng thử lại.</p>
     </div>

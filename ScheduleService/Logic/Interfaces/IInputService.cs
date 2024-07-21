@@ -7,7 +7,7 @@ namespace ScheduleService.Logic.Interfaces;
 
 public interface IInputService
 {
-    public Task<IEnumerable<TimetableDto>> ReadFromFileAsync(string filePath);
+    public Task<IEnumerable<T>> ReadFromFileAsync<T>(string filePath) where T : class, new();
     /// <summary>
     /// Copy file to host with filename {originalFileName}_{timestamp}{fileExtension}
     /// </summary>

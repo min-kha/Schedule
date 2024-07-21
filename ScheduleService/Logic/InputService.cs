@@ -41,7 +41,7 @@ public class InputService : IInputService
 
         return filePath;
     }
-    public async Task<IEnumerable<TimetableDto>> ReadFromFileAsync(string filePath)
+    public async Task<IEnumerable<T>> ReadFromFileAsync<T>(string filePath) where T : class, new()
     {
         string tempFilePath = Path.GetFileNameWithoutExtension(filePath) + "-temp" + Path.GetExtension(filePath);
 
@@ -51,28 +51,37 @@ public class InputService : IInputService
         }
         catch (Exception ex)
         {
-            // Handle potential errors during copying (e.g., insufficient permissions)
-            throw new Exception($"Failed to copy file: {ex.Message}");
+            // Xử lý các lỗi tiềm ẩn trong quá trình sao chép (ví dụ: không đủ quyền)
+            throw new Exception($"Không thể sao chép tệp: {ex.Message}");
         }
+
         try
         {
             string fileExtension = Path.GetExtension(tempFilePath);
-            IEnumerable<TimetableDto> timetableDtos = fileExtension.ToLower() switch
+            IEnumerable<T> items = fileExtension.ToLower() switch
             {
-                ".json" => await _jsonFileService.ReadAsync<TimetableDto>(tempFilePath),
-                ".xml" => await _xmlFileService.ReadAsync<TimetableDto>(tempFilePath),
-                ".csv" => await _csvFileService.ReadAsync<TimetableDto>(tempFilePath),
-                _ => throw new NotSupportedException($"File format '{fileExtension}' is not supported."),
+                ".json" => await _jsonFileService.ReadAsync<T>(tempFilePath),
+                ".xml" => await _xmlFileService.ReadAsync<T>(tempFilePath),
+                ".csv" => await _csvFileService.ReadAsync<T>(tempFilePath),
+                _ => throw new NotSupportedException($"Định dạng tệp '{fileExtension}' không được hỗ trợ."),
             };
-            for (int i = 0; i < timetableDtos.Count(); i++)
+
+            // Kiểm tra xem T có thuộc tính Id không
+            var idProperty = typeof(T).GetProperty("Id");
+            if (idProperty != null && idProperty.PropertyType == typeof(string))
             {
-                timetableDtos.ElementAt(i).Id = (i + 1).ToString();
+                int index = 1;
+                foreach (var item in items)
+                {
+                    idProperty.SetValue(item, index.ToString());
+                    index++;
+                }
             }
-            return timetableDtos;
+
+            return items;
         }
         finally
         {
-            // Ensure the temporary file is deleted regardless of success or failure
             File.Delete(tempFilePath);
         }
     }

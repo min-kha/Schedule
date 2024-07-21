@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleService.Logic.Interfaces;
 
 namespace ScheduleHost.Controllers
 {
@@ -14,20 +18,52 @@ namespace ScheduleHost.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly StudentManagementContext _context;
+        private readonly IInputService _inputService;
 
-        public StudentsController(StudentManagementContext context)
+        public StudentsController(StudentManagementContext context, IInputService inputService)
         {
             _context = context;
+            _inputService = inputService;
+        }
+
+        // POST: api/Students/import
+        [HttpPost("import")]
+        public async Task<IActionResult> ImportStudents(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return BadRequest("File is not selected");
+            }
+
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                BadDataFound = null, // Ignore bad data
+                MissingFieldFound = null, // Ignore missing fields
+            }))
+            {
+                var students = csv.GetRecords<Student>().ToList();
+
+                if (students == null || !students.Any())
+                {
+                    return BadRequest("No valid records in the file");
+                }
+
+                _context.Students.AddRange(students);
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok();
         }
 
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-          if (_context.Students == null)
-          {
-              return NotFound();
-          }
+            if (_context.Students == null)
+            {
+                return NotFound();
+            }
             return await _context.Students.ToListAsync();
         }
 
@@ -35,10 +71,10 @@ namespace ScheduleHost.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
-          if (_context.Students == null)
-          {
-              return NotFound();
-          }
+            if (_context.Students == null)
+            {
+                return NotFound();
+            }
             var student = await _context.Students.FindAsync(id);
 
             if (student == null)
@@ -85,10 +121,10 @@ namespace ScheduleHost.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent(Student student)
         {
-          if (_context.Students == null)
-          {
-              return Problem("Entity set 'StudentManagementContext.Students'  is null.");
-          }
+            if (_context.Students == null)
+            {
+                return Problem("Entity set 'StudentManagementContext.Students'  is null.");
+            }
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
