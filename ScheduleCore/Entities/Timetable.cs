@@ -17,7 +17,6 @@ namespace ScheduleCore.Entities
         public int? RoomId { get; set; }
         public int? SubjectId { get; set; }
         public DateTime Date { get; set; }
-
         public virtual Classroom? Classroom { get; set; }
         public virtual Room? Room { get; set; }
         public virtual Slot? Slot { get; set; }

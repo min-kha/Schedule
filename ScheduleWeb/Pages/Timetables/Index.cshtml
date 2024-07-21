@@ -12,14 +12,20 @@
     <a asp-page="Import/FromFile" class="btn btn-success">Nhập từ file</a>
 </p>
 <form class="card-header">
-    <select class="form-select" asp-for="TeacherId" asp-items="Model.SelectTeachers" onchange="submit()">
+    <select class="form-control" asp-for="TeacherId" asp-items="Model.SelectTeachers" onchange="submit()">
         <option value="0">Vui lòng chọn giáo viên</option>
     </select>
     <div class="card-group">
         <label asp-for="SelectedWeek" class="form-label col-form-label">Chọn tuần:</label>
-        <input class="form-select" type="week" asp-for="SelectedWeek" value="@Model.SelectedWeek" onchange="submit()" />
+        <input class="form-control" type="week" asp-for="SelectedWeek" value="@Model.SelectedWeek" onchange="submit()" />
     </div>
 </form>
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">
+        @Model.ErrorMessage
+    </div>
+}
 @if (Model.WeeklyTimetable.Any())
 {
     <table class="table table-bordered table-hover text-center">

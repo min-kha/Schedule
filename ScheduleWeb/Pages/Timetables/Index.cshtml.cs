@@ -3,34 +3,48 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using ScheduleCore.Entities;
+using ScheduleWeb.Api;
+using ScheduleWeb.Services;
 
 namespace ScheduleWeb.Pages.Timetables
 {
     public class IndexModel : PageModel
     {
-        private readonly ScheduleCore.Entities.StudentManagementContext _context;
+        private readonly ApiService _apiService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public IndexModel(ScheduleCore.Entities.StudentManagementContext context)
+        public IndexModel(IHttpClientFactory httpClientFactory, ApiService apiService)
         {
-            _context = context;
+            _httpClientFactory = httpClientFactory;
+            _apiService = apiService;
         }
+
         [BindProperty(SupportsGet = true)]
-        public string SelectedWeek { get; set; } = $"{DateTime.Today.Year}-W{CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Today, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)}"; //SelectedWeek=2024-W39
+        public string SelectedWeek { get; set; } = $"{DateTime.Today.Year}-W{CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.Today, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday)}";
+
         [BindProperty(SupportsGet = true)]
         public DateTime FirstDayOfWeek { get; set; }
 
         public IList<Timetable> WeeklyTimetable { get; set; } = new List<Timetable>();
+
         [BindProperty(SupportsGet = true)]
         public int TeacherId { get; set; }
+
         public SelectList SelectTeachers { get; set; }
+        public string ErrorMessage { get; set; }
+
         public async Task OnGetAsync()
         {
-            SelectTeachers = new SelectList(_context.Teachers, nameof(Teacher.Id), nameof(Teacher.Name));
+            var teachers = await _apiService.GetAsync<List<Teacher>>(ApiEnpoint.API_TEACHER);
+
+            SelectTeachers = new SelectList(teachers, nameof(Teacher.Id), nameof(Teacher.Name));
             // Parse selected week to get year and week number
             var selectedYear = int.Parse(SelectedWeek.Substring(0, 4));
             var selectedWeekNumber = int.Parse(SelectedWeek.Substring(6));
@@ -38,21 +52,29 @@ namespace ScheduleWeb.Pages.Timetables
             // Calculate the date of the first day of the selected week
             FirstDayOfWeek = CultureInfo.CurrentCulture.Calendar
                 .AddWeeks(new DateTime(selectedYear, 1, 1), selectedWeekNumber - 1)
-                .AddDays(-((int)new DateTime(selectedYear, 1, 1).DayOfWeek) + 1);
-            var lastDayOfWeek = FirstDayOfWeek.AddDays(4);
-            var timetablesInSelectedWeek = await _context.Timetables
-                .Include(t => t.Classroom)
-                .Include(t => t.Room)
-                .Include(t => t.Slot)
-                .Include(t => t.Subject)
-                .Include(t => t.Teacher)
-                .Where(t => t.TeacherId == TeacherId && t.Date >= FirstDayOfWeek && t.Date <= lastDayOfWeek)
-                .OrderBy(t => t.Date)
-                .ThenBy(t => t.SlotId)
-                .ToListAsync();
-
-            WeeklyTimetable = timetablesInSelectedWeek;
+                .AddDays(-(int)new DateTime(selectedYear, 1, 1).DayOfWeek + 1);
+            
+            try {
+                var uriBuilder = new UriBuilder(ApiEnpoint.API_GET_TIMETABLE_TEACHER);
+                var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+                query["TeacherId"] = TeacherId.ToString();
+                query["SelectedWeek"] = SelectedWeek;
+                uriBuilder.Query = query.ToString();
+                string urlWithParameters = uriBuilder.ToString();
+                WeeklyTimetable = await _apiService.GetAsync<List<Timetable>>(urlWithParameters) ?? new();
+            }
+            catch (HttpRequestException httpRequestException)
+            {
+                ErrorMessage = $"Request error: {httpRequestException.Message}";
+            }
+            catch (JsonException jsonException)
+            {
+                ErrorMessage = $"Serialization error: {jsonException.Message}";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"An unexpected error occurred: {ex.Message}";
+            }
         }
-
     }
 }
