@@ -32,7 +32,7 @@ namespace ScheduleWeb.Pages.Classification
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid || _context.StudentClassrooms == null || StudentClassroom == null)
+            if (/*!ModelState.IsValid || */_context.StudentClassrooms == null || StudentClassroom == null)
             {
                 return Page();
             }

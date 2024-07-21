@@ -2,7 +2,7 @@
 @model ScheduleWeb.Pages.Classrooms.CreateModel
 
 @{
-    var folderName = new System.IO.DirectoryInfo(Request.Path).Parent?.Name; ViewData["Title"] = $"{folderName} Create";
+    ViewData["Title"] = "Create";
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
@@ -33,6 +33,10 @@
                 <label asp-for="Classroom.Year" class="control-label"></label>
                 <input asp-for="Classroom.Year" class="form-control" />
                 <span asp-validation-for="Classroom.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Classroom.SubjectId" class="control-label"></label>
+                <select asp-for="Classroom.SubjectId" class ="form-control" asp-items="ViewBag.SubjectId"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

@@ -35,6 +35,7 @@ namespace ScheduleWeb.Pages.Classrooms
                 return NotFound();
             }
             Classroom = classroom;
+           ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
             return Page();
         }
 
@@ -47,26 +48,40 @@ namespace ScheduleWeb.Pages.Classrooms
                 return Page();
             }
 
-            _context.Attach(Classroom).State = EntityState.Modified;
+            var classroomToUpdate = await _context.Classrooms.FindAsync(Classroom.Id);
 
-            try
+            if (classroomToUpdate == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClassroomExists(Classroom.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return RedirectToPage("./Index");
+            if (await TryUpdateModelAsync<Classroom>(
+                classroomToUpdate,
+                "Classroom",
+                c => c.Name, c => c.Code, c => c.Semesters, c => c.Year, c => c.SubjectId))
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToPage("./Index");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!ClassroomExists(Classroom.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
+            return Page();
         }
+
 
         private bool ClassroomExists(int id)
         {

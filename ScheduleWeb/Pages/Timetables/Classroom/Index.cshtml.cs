@@ -40,7 +40,7 @@ namespace ScheduleWeb.Pages.Timetables
 
         public async Task OnGetAsync()
         {
-            var Classrooms = await _apiService.GetAsync<List<ScheduleCore.Entities.Classroom>>(ApiEnpoint.API_CLASROOM);
+            var Classrooms = await _apiService.GetAsync<List<ScheduleCore.Entities.Classroom>>(ApiUrl.API_CLASSROOM);
 
             SelectClassrooms = new SelectList(Classrooms, nameof(ScheduleCore.Entities.Classroom.Id), nameof(ScheduleCore.Entities.Classroom.Name));
             // Parse selected week to get year and week number
@@ -53,7 +53,7 @@ namespace ScheduleWeb.Pages.Timetables
                 .AddDays(-(int)new DateTime(selectedYear, 1, 1).DayOfWeek + 1);
             
             try {
-                var uriBuilder = new UriBuilder(ApiEnpoint.API_GET_TIMETABLE_CLASSROOM);
+                var uriBuilder = new UriBuilder(ApiUrl.API_GET_TIMETABLE_CLASSROOM);
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 query["ClassroomId"] = ClassroomId.ToString();
                 query["SelectedWeek"] = SelectedWeek;

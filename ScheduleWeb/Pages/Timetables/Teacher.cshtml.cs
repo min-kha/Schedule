@@ -40,7 +40,7 @@ namespace ScheduleWeb.Pages.Timetables
 
         public async Task OnGetAsync()
         {
-            var teachers = await _apiService.GetAsync<List<Teacher>>(ApiEnpoint.API_TEACHER);
+            var teachers = await _apiService.GetAsync<List<Teacher>>(ApiUrl.API_TEACHER);
 
             SelectTeachers = new SelectList(teachers, nameof(Teacher.Id), nameof(Teacher.Name));
             // Parse selected week to get year and week number
@@ -53,7 +53,7 @@ namespace ScheduleWeb.Pages.Timetables
                 .AddDays(-(int)new DateTime(selectedYear, 1, 1).DayOfWeek + 1);
             
             try {
-                var uriBuilder = new UriBuilder(ApiEnpoint.API_GET_TIMETABLE_TEACHER);
+                var uriBuilder = new UriBuilder(ApiUrl.API_GET_TIMETABLE_TEACHER);
                 var query = HttpUtility.ParseQueryString(uriBuilder.Query);
                 query["TeacherId"] = TeacherId.ToString();
                 query["SelectedWeek"] = SelectedWeek;

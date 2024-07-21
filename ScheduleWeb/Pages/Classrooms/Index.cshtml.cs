@@ -24,7 +24,7 @@ namespace ScheduleWeb.Pages.Classrooms
         {
             if (_context.Classrooms != null)
             {
-                Classroom = await _context.Classrooms.ToListAsync();
+                Classroom = await _context.Classrooms.Include(c=>c.Subject).ToListAsync();
             }
         }
     }

@@ -26,7 +26,7 @@ namespace ScheduleWeb.Pages.Students.Import
         {
             try
             {
-                Students = await _apiService.PostFileAsync<List<Student>>(ApiEnpoint.API_POST_STUDENT_FROM_FILE, FileInput) ?? new();
+                Students = await _apiService.PostFileAsync<List<Student>>(ApiUrl.API_POST_STUDENT_FROM_FILE, FileInput) ?? new();
                 return Page();
             }
             catch (Exception ex)

@@ -20,6 +20,16 @@ namespace ScheduleHost.Controllers
             _context = context;
         }
 
+        [HttpGet("subject")]
+        public async Task<ActionResult<IEnumerable<Classroom>>> GetClassroomsBySubject(int subjectId, int semester)
+        {
+            if (_context.Classrooms == null)
+            {
+                return NotFound();
+            }
+            return await _context.Classrooms.Include(c => c.Subject).Where(c=>c.SubjectId==subjectId && c.Semesters == semester).ToListAsync();
+        }
+
         // GET: api/Classrooms
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Classroom>>> GetClassrooms()
@@ -28,7 +38,7 @@ namespace ScheduleHost.Controllers
           {
               return NotFound();
           }
-            return await _context.Classrooms.ToListAsync();
+            return await _context.Classrooms.Include(c => c.Subject).ToListAsync();
         }
 
         // GET: api/Classrooms/5
@@ -39,7 +49,7 @@ namespace ScheduleHost.Controllers
           {
               return NotFound();
           }
-            var classroom = await _context.Classrooms.FindAsync(id);
+            var classroom =  _context.Classrooms.Include(c => c.Subject).FirstOrDefault(c=>c.Id==id);
 
             if (classroom == null)
             {

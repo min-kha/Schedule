@@ -63,6 +63,16 @@ namespace ScheduleHost.Controllers
             }
         }
 
+        [HttpGet("classroom")]
+        public async Task<ActionResult<IEnumerable<Student>>> GetStudents(int classroomId)
+        {
+            if (_context.StudentClassrooms == null)
+            {
+                return NotFound();
+            }
+            return await _context.StudentClassrooms.Where(sc=>sc.ClassroomId == classroomId).Select(sc=>sc.Student).ToListAsync();
+        }
+
         // GET: api/Students
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()

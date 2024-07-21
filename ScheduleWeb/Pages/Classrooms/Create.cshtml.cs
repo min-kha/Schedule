@@ -20,6 +20,7 @@ namespace ScheduleWeb.Pages.Classrooms
 
         public IActionResult OnGet()
         {
+        ViewData["SubjectId"] = new SelectList(_context.Subjects, "Id", "Code");
             return Page();
         }
 

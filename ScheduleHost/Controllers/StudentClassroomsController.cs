@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleHost.DTOs;
+using ScheduleService.Logic.Interfaces;
 
 namespace ScheduleHost.Controllers
 {
@@ -14,11 +17,80 @@ namespace ScheduleHost.Controllers
     public class StudentClassroomsController : ControllerBase
     {
         private readonly StudentManagementContext _context;
+        private readonly IInputService _inputService;
 
-        public StudentClassroomsController(StudentManagementContext context)
+        public StudentClassroomsController(StudentManagementContext context, IInputService inputService)
         {
             _context = context;
+            _inputService = inputService;
         }
+
+        [HttpPost("import/rank")]
+        public async Task<IActionResult> ImportStudents(IFormFile file, int semester, int subjectId)
+        {
+            try
+            {
+                if (file == null || file.Length == 0)
+                {
+                    return BadRequest("File chưa được chọn");
+                }
+
+                var studentRankDtos = (await _inputService.ReadFromFileAsync<StudentRankDto>(file)).ToList();
+
+                if (!studentRankDtos.Any())
+                {
+                    return BadRequest("Không có bản ghi hợp lệ trong tệp");
+                }
+
+                var classrooms = await _context.Classrooms
+                    .Where(c => c.SubjectId == subjectId && c.Semesters == semester)
+                    .ToListAsync();
+
+                if (!classrooms.Any())
+                {
+                    return BadRequest("Không tìm thấy lớp học phù hợp");
+                }
+
+                // Sắp xếp sinh viên theo Rank (giả sử Rank càng thấp càng giỏi)
+                var sortedStudents = studentRankDtos.OrderBy(s => s.Rank).ToList();
+
+                // Lấy danh sách sinh viên từ database dựa trên mã sinh viên
+                var studentCodes = sortedStudents.Select(s => s.StudentCode).ToList();
+                var students = await _context.Students
+                    .Where(s => studentCodes.Contains(s.Code))
+                    .ToDictionaryAsync(s => s.Code, s => s.Id);
+
+                // Chia sinh viên vào các lớp
+                var assignedStudents = new List<StudentClassroom>();
+                for (int i = 0; i < sortedStudents.Count; i++)
+                {
+                    var studentCode = sortedStudents[i].StudentCode;
+                    if (students.TryGetValue(studentCode, out var studentId))
+                    {
+                        var classroomIndex = i % classrooms.Count;
+                        var classroom = classrooms[classroomIndex];
+
+                        assignedStudents.Add(new StudentClassroom
+                        {
+                            StudentId = studentId,
+                            ClassroomId = classroom.Id
+                        });
+                    }
+                }
+
+                // Lưu kết quả vào database
+                await _context.StudentClassrooms.AddRangeAsync(assignedStudents);
+                await _context.SaveChangesAsync();
+
+                return Ok($"Đã phân bổ {assignedStudents.Count} sinh viên vào {classrooms.Count} lớp");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi server: {ex.Message}");
+            }
+        }
+
+
 
         // GET: api/StudentClassrooms
         [HttpGet]
