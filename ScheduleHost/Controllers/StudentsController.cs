@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ScheduleCore.Entities;
+using ScheduleHost.DTOs;
 using ScheduleService.Logic.Interfaces;
 
 namespace ScheduleHost.Controllers
@@ -30,30 +31,36 @@ namespace ScheduleHost.Controllers
         [HttpPost("import")]
         public async Task<IActionResult> ImportStudents(IFormFile file)
         {
-            if (file == null || file.Length == 0)
+            try
             {
-                return BadRequest("File is not selected");
-            }
-
-            using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                BadDataFound = null, // Ignore bad data
-                MissingFieldFound = null, // Ignore missing fields
-            }))
-            {
-                var students = csv.GetRecords<Student>().ToList();
-
-                if (students == null || !students.Any())
+                if (file == null || file.Length == 0)
                 {
-                    return BadRequest("No valid records in the file");
+                    return BadRequest("File is not selected");
                 }
 
+                var students = (await _inputService.ReadFromFileAsync<StudenDto>(file)).Where(s=>!string.IsNullOrEmpty(s.Code + s.Name+s.Email+s.Address+s.PhoneNumber))
+                        .Select(dto => new Student()
+                        {
+                            Code = dto.Code,
+                            Name = dto.Name,
+                            Address = dto.Address,
+                            Email = dto.Email,
+                            PhoneNumber = dto.PhoneNumber,
+                        }).ToList();
+
+                if (!students.Any())
+                {
+                    return BadRequest("Không có bản ghi hợp lệ trong tệp");
+                }
                 _context.Students.AddRange(students);
                 await _context.SaveChangesAsync();
+                return Ok(students);
+                // TODO: Add lỗi bỏ qua, add tiếp, trả về list lỗi vầ không lỗi 
             }
-
-            return Ok();
+            catch (Exception ex)
+            {
+                return Conflict(ex.InnerException.Message);
+            }
         }
 
         // GET: api/Students

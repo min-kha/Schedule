@@ -45,7 +45,7 @@ namespace ScheduleWeb.Pages.Timetables.Import
                 IEnumerable<TimetableDto> timetableDtos = await _inputService.ReadFromFileAsync<TimetableDto>(filePath);
                 TimetableDtos = timetableDtos.ToList();
 
-                ImportResult = await _apiService.PostAsync<ImportResult<TimetableExtend>>(ApiEnpoint.API_POST_SCHEDULE_FROM_FILE, filePath);
+                ImportResult = await _apiService.PostAsync<ImportResult<TimetableExtend>>(ApiEnpoint.API_POST_SCHEDULE_FROM_FILE, filePath) ?? new();
                 return Page();
             }
             catch (Exception ex)

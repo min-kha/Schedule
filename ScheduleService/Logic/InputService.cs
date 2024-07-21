@@ -18,10 +18,8 @@ public class InputService : IInputService
         _csvFileService = fileServices.First(s => s.GetType() == typeof(CsvFileService));
     }
 
-    public async Task<string> CopyFileToHost(string uploadsFolder, IFormFile file)
+    public async Task<string> CopyFileToHost(string folder, IFormFile file)
     {
-
-
         // Get the original file name
         string originalFileName = Path.GetFileNameWithoutExtension(file.FileName);
         string fileExtension = Path.GetExtension(file.FileName);
@@ -33,7 +31,7 @@ public class InputService : IInputService
         string newFileName = $"{originalFileName}_{timestamp}{fileExtension}";
 
         // Combine the uploads folder path and the new file name
-        string filePath = Path.Combine(uploadsFolder, newFileName);
+        string filePath = Path.Combine(folder, newFileName);
         using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
             await file.CopyToAsync(fileStream);
@@ -41,6 +39,55 @@ public class InputService : IInputService
 
         return filePath;
     }
+    public async Task<IEnumerable<T>> ReadFromFileAsync<T>(IFormFile file) where T : class, new()
+    {
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentException("File không hợp lệ hoặc trống.");
+        }
+
+        string tempFilePath = Path.GetRandomFileName();
+
+        try
+        {
+            using (var stream = new FileStream(tempFilePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            string fileExtension = Path.GetExtension(file.FileName).ToLower();
+            IEnumerable<T> items = fileExtension switch
+            {
+                ".json" => await _jsonFileService.ReadAsync<T>(tempFilePath),
+                ".xml" => await _xmlFileService.ReadAsync<T>(tempFilePath),
+                ".csv" => await _csvFileService.ReadAsync<T>(tempFilePath),
+                _ => throw new NotSupportedException($"Định dạng tệp '{fileExtension}' không được hỗ trợ."),
+            };
+
+            // Kiểm tra xem T có thuộc tính Id không
+            var idProperty = typeof(T).GetProperty("Id");
+            if (idProperty != null && idProperty.PropertyType == typeof(string))
+            {
+                int index = 1;
+                foreach (var item in items)
+                {
+                    idProperty.SetValue(item, index.ToString());
+                    index++;
+                }
+            }
+
+            return items;
+        }
+        finally
+        {
+            if (File.Exists(tempFilePath))
+            {
+                File.Delete(tempFilePath);
+            }
+        }
+    }
+
+
     public async Task<IEnumerable<T>> ReadFromFileAsync<T>(string filePath) where T : class, new()
     {
         string tempFilePath = Path.GetFileNameWithoutExtension(filePath) + "-temp" + Path.GetExtension(filePath);

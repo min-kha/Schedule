@@ -1,0 +1,125 @@
+﻿@page
+@model             FromFileModel
+@{
+    ViewData["Title"] = $"Import File";
+}
+<!-- DataTables -->
+<link rel="stylesheet" href="~/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+
+<p>Nhập lịch học từ file theo <a href="http://localhost:5215/templates/import-schedule-template.csv"><b>TEMPLATE</b></a>, hệ thống sẽ tự động tạo lịch học căn cứ theo CreditSlot trong môn học và ngày bắt đầu.</p>
+<p>Hỗ trợ định dạng file: json, xml, csv</p>
+
+<form method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="fileInput">Chọn file:</label>
+        <input type="file" class="form-control-file" asp-for="FileInput">
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+@if (!ModelState.IsValid)
+{
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">An error occurred!</h4>
+        <p>@Html.ValidationSummary(false, "")</p>
+        <hr>
+        <p class="mb-0">Đã xảy ra lỗi khi nhập lịch trình. Vui lòng thử lại.</p>
+    </div>
+}
+@if (Model.Students != null)
+{
+<div class="card">
+    <div class="card-header">
+            <h3 class="card-title">Kết quả import:</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <table id="table-expand" class="table table-bordered table-hover">
+        <thead class="table-secondary">
+            <tr>
+                <th>
+                    #
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].Code)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].PhoneNumber)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Students[0].Address)
+                </th>
+                <th class="text-center">Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Students)
+            {
+                <tr>
+                    <td>
+                        <img height="120" alt="Student image" src="~/dist/img/anh-the-@(new Random().Next(1,6)).jpg"/>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Code)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PhoneNumber)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Address)
+                    </td>
+                            <td>
+                                <span class="text-success">Success</span>
+                            </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+     </div>
+    <!-- /.card-body -->
+</div>
+
+
+@section Scripts {
+    <!-- DataTables  & Plugins -->
+    <script src="~/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/plugins/jszip/jszip.min.js"></script>
+    <script src="~/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <script>
+        $(function () {
+            $("#table-expand").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#table-expand_wrapper .col-md-6:eq(0)');
+        });
+    </script>
+}
+}
