@@ -5,8 +5,6 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<h1>Danh sách phòng của ngày @((Model.Date ?? DateTime.Now).ToString("d/M/yyyy"))</h1>
-
 <p>
     <a asp-page="Create" class="btn btn-outline-success">Tạo mới</a>
     <a asp-page="Import/FromFile" class="btn btn-success">Nhập từ file</a>
